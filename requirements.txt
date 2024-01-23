@@ -4,3 +4,22 @@ gunicorn==20.1.0
 psycopg2==2.8.6
 sqlparse==0.4.2
 whitenoise==6.2.0
+numpy
+pandas
+scipy
+networkx
+matplotlib
+pathlib
+sympy
+pillow
+mpmath
+schemdraw
+#pyinstaller
+#tkdesigner
+dsdobjects
+pytest
+peppercornenumerator
+crnverifier>=0.3
+stickydesign>=0.8.4
+git+https://github.com/DNA-and-Natural-Algorithms-Group/peppercompiler@spacefixes # (updated by Dr. Evans <3)
+git+https://github.com/cgevans/piperine.git # (updated for 3.12 by Dr. Evans for us <3)
