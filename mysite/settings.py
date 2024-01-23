@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ["PGDATABASE"],
-        'USER': os.environ["PGUSER"],
-        'PASSWORD': os.environ["PGPASSWORD"],
-        'HOST': os.environ["PGHOST"],
-        'PORT': os.environ["PGPORT"],
+        'NAME': os.environ["MYSQLDATABASE"],
+        'USER': os.environ["MYSQLUSER"],
+        'PASSWORD': os.environ["MYSQLPASSWORD"],
+        'HOST': os.environ["MYSQLHOST"],
+        'PORT': os.environ["MYSQLPORT"],
     }
 }
 
@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New York'
 
 USE_I18N = True
 
