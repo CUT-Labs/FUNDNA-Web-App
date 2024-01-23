@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ["MYSQLDATABASE"],
         'USER': os.environ["MYSQLUSER"],
         'PASSWORD': os.environ["MYSQLPASSWORD"],
