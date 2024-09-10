@@ -20,8 +20,9 @@ schemdraw
 #tkdesigner
 dsdobjects
 pytest
-peppercornenumerator
-crnverifier>=0.3
-stickydesign>=0.8.4
-git+https://github.com/DNA-and-Natural-Algorithms-Group/peppercompiler@spacefixes # (updated by Dr. Evans <3)
-git+https://github.com/cgevans/piperine.git # (updated for 3.12 by Dr. Evans for us <3)
+#peppercornenumerator
+cryptography
+#crnverifier>=0.3
+#stickydesign>=0.8.4
+#git+https://github.com/DNA-and-Natural-Algorithms-Group/peppercompiler@spacefixes # (updated by Dr. Evans <3)
+#git+https://github.com/cgevans/piperine.git # (updated for 3.12 by Dr. Evans for us <3)
