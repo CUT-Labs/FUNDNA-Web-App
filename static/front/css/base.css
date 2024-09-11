@@ -1,0 +1,64 @@
+:root {
+    /* Primary Colors */
+    --bs-primary: #0033A0 !important;
+    --bs-secondary: #2169FF !important;
+    --bs-white: #FFFFFF !important;
+
+    /* Secondary Palette */
+    --uk-secondary-light-blue: #1E8AFF !important;
+    --uk-secondary-lighter-blue: #B1C9E8 !important;
+    --uk-secondary-dark-blue: #1B365D !important;
+    --uk-secondary-yellow: #FFDC00 !important;
+    --uk-secondary-orange: #EFA05E !important;
+    --uk-secondary-teal: #4CBCC0 !important;
+
+    /* Neutral Colors */
+    --uk-neutral-gray: #DCDDDE !important;
+    --uk-neutral-tan: #D6D2C4 !important;
+    --uk-neutral-black: #000000 !important;
+
+    --bs-dark: #1B365D !important;
+    --bs-dark-rgb: #1B365D !important;
+}
+
+body {
+    background-color: var(--bs-white) !important;
+    color: var(--uk-neutral-black) !important;
+}
+
+.navbar {
+    background-color: var(--uk-secondary-lighter-blue) !important;
+    color: var(--uk-secondary-dark-blue) !important;
+}
+
+.navbar a {
+    color: var(--uk-secondary-dark-blue) !important;
+}
+
+.navbar-brand {
+    color: var(--bs-white) !important;
+}
+
+.bg-dark {
+    background-color: var(--uk-secondary-dark-blue) !important;
+    color: var(--uk-secondary-lighter-blue) !Important;
+}
+
+.btn-primary {
+    background-color: var(--uk-secondary-lighter-blue) !important;
+    border-color: var(--uk-secondary-lighter-blue) !important;
+    color: var(--uk-secondary-dark-blue) !important;
+}
+
+a {
+    color: var(--bs-primary) !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'League Spartan', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+p, body, a, span, div {
+    font-family: 'Open Sans', sans-serif !important;
+}
