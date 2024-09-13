@@ -8,7 +8,7 @@ def main():
     """Run administrative tasks."""
 
     from django.core.management.commands.runserver import Command as runserver
-    runserver.default_port = "16458"
+    runserver.default_port = "80"
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
     try:
