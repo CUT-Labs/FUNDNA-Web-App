@@ -21,4 +21,4 @@ RUN pip install --upgrade pip && \
 COPY . /app/
 
 # Run migrations and start the Django development server
-CMD ["bash", "-c", "python manage.py migrate && python manage.py runserver"]
+CMD ["bash", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:16458"]
