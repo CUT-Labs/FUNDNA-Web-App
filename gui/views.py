@@ -1,13 +1,41 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
+"""
+    EXAMPLE:
+        def viewName(request):
+            return render(request, 'path/from/pages')
+            
+    path/from/pages could be anything inside of pages. for example,
+    
+    templates/base.html
+    index.html
+    gui/index.html
+    gui/convert.html
+    
+    etc.
+    
+    the viewName is what is called in urls.py and where the http path is defined.
+    path/from/pages does nothing except find the file and use that as the html source for render()    
+"""
+
 
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
 
+
 def guiIndex(request):
     return render(request, 'gui/index.html')
+
+
+def convert(request):
+    return render(request, 'gui/convert.html')
+
+
+def simulate(request):
+    return render(request, 'gui/simulate.html')
+
 
 # def index(request):
 #    return HttpResponse("Hello, world. You're at the polls index.")
