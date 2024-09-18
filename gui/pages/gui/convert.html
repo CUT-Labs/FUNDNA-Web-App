@@ -2,7 +2,17 @@
 
 {% block title %}Convert{% endblock %}
 
+{% load static %}
+
 {% block content %}
+    <!-- Load MathQuill CSS & JS -->
+    <link rel="stylesheet" href="{% static 'front/mathquill/mathquill.css' %}">
+    <script src="{% static 'front/mathquill/mathquill.js' %}"></script>
+
+    <!-- Load MathJax for rendering LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <div class="jumbotron text-center">
         <h1>FUNDNA GUI - Convert</h1>
     </div>
@@ -53,12 +63,13 @@
             <input type="hidden" id="to-level" name="to-level">
         </div>
 
-        <!-- Step 3: Blank for now -->
+        <!-- Step 3: Dynamic content based on selection -->
         <br/>
         <br/>
         <div id="step-3" style="display: none;">
             <h4 style="color:var(--primary)">Step 3: Additional options</h4>
-            <p>Step 3 will be populated later...</p>
+            <div id="step-3-content">
+            </div> <!-- Dynamic content will be loaded here -->
         </div>
 
         <!-- Add buttons for navigation -->
@@ -93,6 +104,7 @@
         const toLevelInput = document.getElementById("to-level");
         const step2 = document.getElementById("step-2");
         const step3 = document.getElementById("step-3");
+        const step3Content = document.getElementById("step-3-content");
         const nextButton = document.getElementById("next-button");
 
         // Handle Step 1: Selecting what to convert from
@@ -155,6 +167,46 @@
 
                 const toValue = selectedCard.getAttribute('data-value');
                 toLevelInput.value = toValue;
+
+                // Load appropriate content in Step 3 based on Step 1 selection
+                const fromValue = fromLevelInput.value;
+                step3Content.innerHTML = ''; // Clear previous content
+
+                if (fromValue === 'function') {
+                    // Fetch the LaTeX editor dynamically via AJAX
+                    fetch('latex-editor')
+                    .then(response => response.text())
+                    .then(html => {
+                        step3Content.innerHTML = html;
+
+                        // Initialize MathQuill after content is loaded
+                        var MQ = MathQuill.getInterface(2);
+                        var mathField = MQ.MathField(document.getElementById('math-field'), {
+                            spaceBehavesLikeTab: true,
+                            handlers: {
+                                edit: function() {
+                                    var latex = mathField.latex();
+                                    document.getElementById('latex-input').value = latex;
+                                    document.getElementById('equation-preview').innerHTML = `\\(${latex}\\)`;
+                                    MathJax.typesetPromise();
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error loading LaTeX editor:', error));
+                } else if (fromValue === 'gate') {
+                    // Display placeholder content for Gates
+                    step3Content.innerHTML = `
+                        <h5>Gate Placeholder</h5>
+                        <p>Here we will configure Gate-related conversions.</p>
+                    `;
+                } else if (fromValue === 'crn' || fromValue === 'dsd') {
+                    // Display a simple text box for CRN or DSD
+                    step3Content.innerHTML = `
+                        <p style='color:var(--secondary)'>Enter CRN or DSD details</p>
+                        <textarea class="form-control" rows="5" placeholder="A + B -> C"></textarea>
+                    `;
+                }
 
                 // Show Step 3 and enable Next button
                 step3.style.display = "block";

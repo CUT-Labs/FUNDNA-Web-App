@@ -3,7 +3,7 @@ from scipy.integrate import odeint
 from scipy.optimize import minimize
 import matplotlib
 
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
 
 import matplotlib.pyplot as plt
 

@@ -19,7 +19,7 @@ from gui.classes.CRN import *
 import schemdraw
 from schemdraw import logic
 
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
 
 
 

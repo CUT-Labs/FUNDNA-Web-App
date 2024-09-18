@@ -45,5 +45,9 @@ def simulateResult(request):
     return render(request, 'gui/simulateResult.html')
 
 
+def latexEditor(request):
+    return render(request, 'templates/partials/latex_editor.html')
+
+
 # def index(request):
 #    return HttpResponse("Hello, world. You're at the polls index.")

@@ -2,9 +2,10 @@ from math import *
 import sympy as sp
 import numpy as np
 from tabulate import tabulate
+
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
 
 
 class Bernstein:

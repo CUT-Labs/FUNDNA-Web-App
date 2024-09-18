@@ -12,7 +12,7 @@ from FunctionTypes import Types
 from SolverUtil import FSMSolver
 from Bernstein import Bernstein
 
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
 
 import matplotlib.pyplot as plt
 
