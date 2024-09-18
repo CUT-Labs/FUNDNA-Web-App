@@ -23,13 +23,16 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
+                    <a class="nav-link" href="/">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Convert</a>
+                    <a class="nav-link" href="/gui">GUI</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="https://github.com/CUT-Labs/FUNDNA">GitHub</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://salehi.engr.uky.edu/cut-lab">CUT Lab</a>
                 </li>
             </ul>
         </div>
@@ -44,18 +47,21 @@
         <div class="container-fluid">
             <div class="row" style="align-items: center;">
                 <div class="col-6">
-                    <p style="color: var(--uk-secondary-lighter-blue) !important;">&copy; 2024 FUNDNA - CUT Labs</p>
+                    <p style="margin: 0 !important; color: var(--uk-secondary-lighter-blue) !important;">&copy; 2024 FUNDNA - CUT Labs</p>
                 </div>
                 <div class="col-6">
                     <div class="row">
                         <h4 style="color: var(--uk-secondary-lighter-blue) !important;">Supported By:</h4>
                     </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <img src="{% static 'front/img/NSF_Official_logo_High_Res_1200ppi.png' %}" style="width: auto; height: 5em;"/>
+                    <div class="row" style="align-items: center;">
+                        <div class="col-4" style="justify-content: center">
+                            <img src="{% static 'front/img/nsf-logo-desktop.svg' %}" style="width: 90%; height: auto;"/>
                         </div>
-                        <div class="col-6">
-                            <img src="{% static 'front/img/Electrical and Computer Engineering-white.png' %}" style="width: auto; height: 5em;"/>
+                        <div class="col-4" style="justify-content: center">
+                            <img src="{% static 'front/img/cut labs logo.png' %}" style="width: 90%; height: auto;"/>
+                        </div>
+                        <div class="col-4" style="justify-content: center">
+                            <img src="{% static 'front/img/Electrical and Computer Engineering-white.png' %}" style="width: 90%; height: auto;"/>
                         </div>
                     </div>
                 </div>
