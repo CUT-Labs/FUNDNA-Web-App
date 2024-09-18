@@ -1,0 +1,70 @@
+{% load static %}
+
+<!-- Load MathQuill CSS -->
+<link rel="stylesheet" href="{% static 'front/mathquill/mathquill.css' %}">
+
+<!-- Optional: Customize the MathQuill look with some additional styling -->
+<style>
+    .latex-equation-editor {
+        margin: 20px;
+    }
+    .mq-editable-field {
+        border: 1px solid #ccc;
+        padding: 10px;
+        min-height: 50px;
+    }
+    #equation-preview {
+        margin-top: 20px;
+        font-size: 24px;
+    }
+</style>
+
+<!-- LaTeX Editor Component -->
+<div class="container">
+    <div class="row">
+        <label for="latex-input">Enter LaTeX Equation:</label>
+    </div>
+    <div class="row latex-equation-editor">
+        <div class="col-xl-6">
+            <div class="row">
+                <div id="math-field" class="mq-editable-field"></div>
+                <input type="hidden" id="latex-input" name="latex-input">
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <!-- Preview for the LaTeX equation -->
+            <div id="equation-preview"></div>
+        </div>
+    </div>
+        </div>
+</div>
+
+<!-- Load MathQuill JavaScript -->
+<script src="{% static 'front/mathquill/mathquill.js' %}"></script>
+
+<!-- Load MathJax for rendering LaTeX -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<script>
+    // Initialize MathQuill
+    var MQ = MathQuill.getInterface(2);
+
+    // Create a MathQuill math field inside the math-field div
+    var mathField = MQ.MathField(document.getElementById('math-field'), {
+        spaceBehavesLikeTab: true,  // Let space bar behave like a tab key
+        handlers: {
+            edit: function() {
+                // Get the LaTeX code from the math field
+                var latex = mathField.latex();
+
+                // Set the hidden input to hold the LaTeX code
+                document.getElementById('latex-input').value = latex;
+
+                // Update the preview with MathJax rendering
+                document.getElementById('equation-preview').innerHTML = `\\(${latex}\\)`;
+                MathJax.typesetPromise();
+            }
+        }
+    });
+</script>

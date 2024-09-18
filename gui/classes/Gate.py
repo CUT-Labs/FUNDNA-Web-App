@@ -1,5 +1,5 @@
-from GateTypes import GateTypes
-from NotGateTypes import NotGateTypes
+from .GateTypes import GateTypes
+from .NotGateTypes import NotGateTypes
 
 
 def PrintGateInfo(gate):

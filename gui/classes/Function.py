@@ -1,6 +1,6 @@
-from Util import *
-from FuncTypes import FuncTypes
-from RearrangeType import RearrangeType
+from gui.methods.FUNDNAUtil import *
+from .FuncTypes import FuncTypes
+from .RearrangeType import RearrangeType
 
 
 class Function:

@@ -4,6 +4,167 @@
 
 {% block content %}
     <div class="jumbotron text-center">
-        <h1>FUNDNA GUI</h1>
+        <h1>FUNDNA GUI - Convert</h1>
     </div>
+
+    <div class="container">
+        <!-- Step 1: Select what you're converting from -->
+        <div id="step-1">
+            <h4 style="color:var(--primary)">Step 1: Select what you're converting from</h4>
+            <div class="row text-center" style="justify-content: center">
+                <div class="col-md-3">
+                    <div class="card convert-card" data-value="function">
+                        <div class="card-body">
+                            <p class="card-title" style="margin: 0;font-weight: bold;">Function</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card convert-card" data-value="gate">
+                        <div class="card-body">
+                            <p class="card-title" style="margin: 0;font-weight: bold;">Gate</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card convert-card" data-value="crn">
+                        <div class="card-body">
+                            <p class="card-title" style="margin: 0;font-weight: bold;">CRN</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card convert-card" data-value="dsd">
+                        <div class="card-body">
+                            <p class="card-title" style="margin: 0;font-weight: bold;">DSD System</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="from-level" name="from-level">
+        </div>
+
+        <!-- Step 2: Select what you're converting to -->
+        <br/>
+        <br/>
+        <div id="step-2" style="display: none;">
+            <h4 style="color:var(--primary)">Step 2: Select what you're converting to</h4>
+            <div id="step-2-options" class="row text-center" style="justify-content: center"></div>
+            <input type="hidden" id="to-level" name="to-level">
+        </div>
+
+        <!-- Step 3: Blank for now -->
+        <br/>
+        <br/>
+        <div id="step-3" style="display: none;">
+            <h4 style="color:var(--primary)">Step 3: Additional options</h4>
+            <p>Step 3 will be populated later...</p>
+        </div>
+
+        <!-- Add buttons for navigation -->
+        <div class="mt-4 mb-4">
+            <button id="next-button" class="btn btn-primary" style="display: none;float:right;">Next</button>
+        </div>
+    </div>
+
+    <style>
+        .convert-card {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .convert-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .convert-card.selected, .convert-card-step-2.selected {
+            border: 2px solid var(--secondary);
+        }
+    </style>
+
+    <script>
+        const conversionOptions = {
+            function: ["Gate", "CRN", "DSD System", "DNA Strands"],
+            gate: ["CRN", "DSD System", "DNA Strands"],
+            crn: ["DSD System", "DNA Strands"],
+            dsd: ["DNA Strands"]
+        };
+
+        const fromLevelInput = document.getElementById("from-level");
+        const toLevelInput = document.getElementById("to-level");
+        const step2 = document.getElementById("step-2");
+        const step3 = document.getElementById("step-3");
+        const nextButton = document.getElementById("next-button");
+
+        // Handle Step 1: Selecting what to convert from
+        document.querySelectorAll('.convert-card').forEach(card => {
+            card.addEventListener('click', function () {
+                // Remove the selected class from all cards
+                document.querySelectorAll('.convert-card').forEach(card => card.classList.remove('selected'));
+
+                // Add selected class to the clicked card
+                this.classList.add('selected');
+
+                const fromValue = this.getAttribute('data-value');
+                fromLevelInput.value = fromValue;
+
+                // Reset Step 2 options
+                document.getElementById("step-2-options").innerHTML = '';
+
+                // Populate Step 2 options based on the selected "from" value
+                if (conversionOptions[fromValue]) {
+                    conversionOptions[fromValue].forEach(option => {
+                        const colDiv = document.createElement("div");
+                        colDiv.classList.add("col-md-3");
+
+                        const cardDiv = document.createElement("div");
+                        cardDiv.classList.add("card", "convert-card-step-2");
+                        cardDiv.setAttribute("data-value", option);
+
+                        const cardBody = document.createElement("div");
+                        cardBody.classList.add("card-body");
+
+                        const cardTitle = document.createElement("p");
+                        cardTitle.classList.add("card-title");
+                        cardTitle.style.margin = "0";
+                        cardTitle.style.fontWeight = "bold";
+                        cardTitle.textContent = option.charAt(0).toUpperCase() + option.slice(1);  // Capitalize first letter
+
+                        cardBody.appendChild(cardTitle);
+                        cardDiv.appendChild(cardBody);
+                        colDiv.appendChild(cardDiv);
+                        document.getElementById("step-2-options").appendChild(colDiv);
+                    });
+
+                    // Show Step 2
+                    step2.style.display = "block";
+                    step3.style.display = "none";
+                    nextButton.style.display = "none";  // Hide Next button until Step 2 selection
+                }
+            });
+        });
+
+        // Handle Step 2: Selecting what to convert to
+        document.getElementById("step-2-options").addEventListener('click', function (e) {
+            const selectedCard = e.target.closest('.convert-card-step-2');
+            if (selectedCard) {
+                // Remove the selected class from all cards in Step 2
+                document.querySelectorAll('.convert-card-step-2').forEach(card => card.classList.remove('selected'));
+
+                // Add selected class to the clicked card in Step 2
+                selectedCard.classList.add('selected');
+
+                const toValue = selectedCard.getAttribute('data-value');
+                toLevelInput.value = toValue;
+
+                // Show Step 3 and enable Next button
+                step3.style.display = "block";
+                nextButton.style.display = "block";
+            }
+        });
+
+        // Placeholder for handling the "Next" button
+        nextButton.addEventListener("click", function () {
+            alert("Proceeding to the next step...");
+        });
+    </script>
 {% endblock %}

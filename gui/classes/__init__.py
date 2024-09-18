@@ -1,13 +1,13 @@
 # Importing all classes from fsm
-from .fsm.FSM import FSM
-from .fsm.Bernstein import Bernstein
-from .fsm.FunctionTypes import FunctionTypes
+from .fsm.FSM import *
+from .fsm.Bernstein import *
+from .fsm.FunctionTypes import *
 
 # Importing other classes in the classes folder
-from .CRN import CRN
-from .Function import Function
-from .FuncTypes import FuncTypes
-from .Gate import Gate
-from .GateTypes import GateTypes
-from .NotGateTypes import NotGateTypes
-from .RearrangeType import RearrangeType
+from .CRN import *
+from .Function import *
+from .FuncTypes import *
+from .Gate import *
+from .GateTypes import *
+from .NotGateTypes import *
+from .RearrangeType import *

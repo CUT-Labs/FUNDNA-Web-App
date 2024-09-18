@@ -10,7 +10,7 @@ from tabulate import tabulate
 from FSMUtil import FSM, State, Transition, parse_file
 from FunctionTypes import Types
 from SolverUtil import FSMSolver
-from BernsteinUtil import Bernstein
+from Bernstein import Bernstein
 
 matplotlib.use('TkAgg')
 

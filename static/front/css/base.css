@@ -1,4 +1,7 @@
 :root {
+    --prmiary: #B1C9E8 !important;
+    --secondary: #1B365D !important;
+
     /* Primary Colors */
     --bs-primary: #0033A0 !important;
     --bs-secondary: #2169FF !important;

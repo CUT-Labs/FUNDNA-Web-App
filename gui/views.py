@@ -33,8 +33,16 @@ def convert(request):
     return render(request, 'gui/convert.html')
 
 
+def convertResult(request):
+    return render(request, 'gui/convertResult.html')
+
+
 def simulate(request):
     return render(request, 'gui/simulate.html')
+
+
+def simulateResult(request):
+    return render(request, 'gui/simulateResult.html')
 
 
 # def index(request):
