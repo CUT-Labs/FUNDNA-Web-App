@@ -23,6 +23,7 @@ dsdobjects
 pytest
 #peppercornenumerator
 cryptography
+git+https://github.com/CUT-Labs/nuskell.git@master#egg=nuskell[dev]
 #crnverifier>=0.3
 #stickydesign>=0.8.4
 #git+https://github.com/DNA-and-Natural-Algorithms-Group/peppercompiler@spacefixes # (updated by Dr. Evans <3)

@@ -34,7 +34,17 @@ def convert(request):
 
 
 def convertResult(request):
-    return render(request, 'gui/convertResult.html')
+    # Extract GET parameters
+    from_level = request.GET.get('from_level', 'default_value')  # Provide a default value if needed
+    to_level = request.GET.get('to_level', 'default_value')
+
+    # Pass the variables to the template
+    context = {
+        'from_level': from_level,
+        'to_level': to_level,
+    }
+
+    return render(request, 'gui/convertResult.html', context)
 
 
 def simulate(request):

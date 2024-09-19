@@ -1,9 +1,27 @@
-{% extends 'templates/base.html' %}
+{% extends 'templates/result.html' %}
 
-{% block title %}Result{% endblock %}
+{% block resultType %}Conversion{% endblock %}
 
-{% block content %}
-    <div class="jumbotron text-center">
-        <h1>Convert Result</h1>
-    </div>
+{% block header %}
+    <h1>Conversion Result: From {{ from_level }} to {{ to_level }}</h1>
+{% endblock %}
+
+{% block description %}
+    <p>You have selected to convert from {{ from_level }} to {{ to_level }}.</p>
+{% endblock %}
+
+{% block interpretation %}
+    {% if from_level == 'function' %}
+        {% include 'templates/partials/function.html' %}
+    {% endif %}
+
+    {% if to_level == 'gates' %}
+        {% include 'templates/partials/gates.html' %}
+    {% elif to_level == 'crn' %}
+        {% include 'templates/partials/crn.html' %}
+    {% elif to_level == 'dsd' %}
+        {% include 'templates/partials/dsd.html' %}
+    {% elif to_level == 'dna' %}
+        {% include 'templates/partials/dna_sequence.html' %}
+    {% endif %}
 {% endblock %}

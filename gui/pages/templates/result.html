@@ -1,0 +1,18 @@
+{% extends 'templates/base.html' %}
+
+{% block title %}{% block resultType %}{% endblock %} Results{% endblock %}
+
+{% block content %}
+    <div class="row" id="resultTypeHeader">
+        {% block header %}
+        {% endblock %}
+    </div>
+    <div class="row" id="resultDescription">
+        {% block description %}
+        {% endblock %}
+    </div>
+    <div class="row" id="resultInterpretation">
+        {% block interpretation %}
+        {% endblock %}
+    </div>
+{% endblock %}

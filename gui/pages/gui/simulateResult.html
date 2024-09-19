@@ -1,9 +1,25 @@
-{% extends 'templates/base.html' %}
+{% extends 'templates/result.html' %}
 
-{% block title %}Result{% endblock %}
+{% block resultType %}Simulation{% endblock %}
 
-{% block content %}
-    <div class="jumbotron text-center">
-        <h1>Simulate Result</h1>
+{% block header %}
+    <h1>Simulation Results</h1>
+{% endblock %}
+
+{% block description %}
+    <p>Results of your FSM approximation or ODE solver are displayed below.</p>
+{% endblock %}
+
+{% block interpretation %}
+    <!-- Include relevant content or visuals for simulation result -->
+    <div class="row">
+        <div class="col-md-6">
+            <h5>FSM Approximation</h5>
+            <p><!-- Placeholder for FSM details --></p>
+        </div>
+        <div class="col-md-6">
+            <h5>ODE Solver Result</h5>
+            <p><!-- Placeholder for ODE details --></p>
+        </div>
     </div>
 {% endblock %}
