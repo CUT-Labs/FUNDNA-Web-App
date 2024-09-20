@@ -19,7 +19,6 @@
 
     <div class="container">
         <form id="convertForm" method="POST" action="{% url 'convertResult' %}">
-            {% csrf_token %}
             <!-- Step 1: Select what you're converting from -->
             <div id="step-1">
                 <h4 style="color:var(--primary)">Step 1: Select what you're converting from</h4>

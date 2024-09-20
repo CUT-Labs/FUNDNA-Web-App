@@ -1,11 +1,15 @@
 import matplotlib
-matplotlib.use('Agg')  # Use the Agg backend for rendering graphs in Django
 import matplotlib.pyplot as plt
+
 import numpy as np
+
 from io import BytesIO
 import base64
+
 import sympy as sp
 from sympy.parsing.latex import parse_latex
+
+matplotlib.use('Agg')  # Use the Agg backend for rendering graphs in Django
 
 
 def generatePoints(function, x_bounds=[0, 1], numPoints=1000):
