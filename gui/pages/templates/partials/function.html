@@ -1,10 +1,30 @@
 <div class="row">
     <div class="col-md-6">
         <h5>LaTeX Equation:</h5>
-        <p><!-- Placeholder for LaTeX equation --></p>
+        <p>
+            <!-- Render LaTeX equation using MathJax -->
+            $$ {{ latex_input }} $$
+        </p>
     </div>
     <div class="col-md-6">
         <h5>Approximation Graph:</h5>
-        <!-- Include a graph for the function approximation from interval 0 to 1 -->
+        {% if graph_url %}
+            <img src="{{ graph_url }}" alt="Graph of the function">
+        {% else %}
+            <p>No graph available.</p>
+        {% endif %}
     </div>
 </div>
+
+<!-- Load MathJax for rendering LaTeX -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>

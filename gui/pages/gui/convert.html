@@ -18,66 +18,69 @@
     </div>
 
     <div class="container">
-        <!-- Step 1: Select what you're converting from -->
-        <div id="step-1">
-            <h4 style="color:var(--primary)">Step 1: Select what you're converting from</h4>
-            <div class="row text-center" style="justify-content: center">
-                <div class="col-md-3">
-                    <div class="card convert-card" data-value="function">
-                        <div class="card-body">
-                            <p class="card-title" style="margin: 0;font-weight: bold;">Function</p>
+        <form id="convertForm" method="POST" action="{% url 'convertResult' %}">
+            {% csrf_token %}
+            <!-- Step 1: Select what you're converting from -->
+            <div id="step-1">
+                <h4 style="color:var(--primary)">Step 1: Select what you're converting from</h4>
+                <div class="row text-center" style="justify-content: center">
+                    <div class="col-md-3">
+                        <div class="card convert-card" data-value="function">
+                            <div class="card-body">
+                                <p class="card-title" style="margin: 0;font-weight: bold;">Function</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card convert-card" data-value="gate">
+                            <div class="card-body">
+                                <p class="card-title" style="margin: 0;font-weight: bold;">Gate</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card convert-card" data-value="crn">
+                            <div class="card-body">
+                                <p class="card-title" style="margin: 0;font-weight: bold;">CRN</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card convert-card" data-value="dsd">
+                            <div class="card-body">
+                                <p class="card-title" style="margin: 0;font-weight: bold;">DSD System</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card convert-card" data-value="gate">
-                        <div class="card-body">
-                            <p class="card-title" style="margin: 0;font-weight: bold;">Gate</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card convert-card" data-value="crn">
-                        <div class="card-body">
-                            <p class="card-title" style="margin: 0;font-weight: bold;">CRN</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card convert-card" data-value="dsd">
-                        <div class="card-body">
-                            <p class="card-title" style="margin: 0;font-weight: bold;">DSD System</p>
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" id="from-level" name="FromLevel">
             </div>
-            <input type="hidden" id="from-level" name="from-level">
-        </div>
 
-        <!-- Step 2: Select what you're converting to -->
-        <br/>
-        <br/>
-        <div id="step-2" style="display: none;">
-            <h4 style="color:var(--primary)">Step 2: Select what you're converting to</h4>
-            <div id="step-2-options" class="row text-center" style="justify-content: center"></div>
-            <input type="hidden" id="to-level" name="to-level">
-        </div>
+            <!-- Step 2: Select what you're converting to -->
+            <br/>
+            <br/>
+            <div id="step-2" style="display: none;">
+                <h4 style="color:var(--primary)">Step 2: Select what you're converting to</h4>
+                <div id="step-2-options" class="row text-center" style="justify-content: center"></div>
+                <input type="hidden" id="to-level" name="ToLevel">
+            </div>
 
-        <!-- Step 3: Dynamic content based on selection -->
-        <br/>
-        <br/>
-        <div id="step-3" style="display: none;">
-            <h4 style="color:var(--primary)">Step 3: Additional options</h4>
-            <div id="step-3-content">
-            </div> <!-- Dynamic content will be loaded here -->
-        </div>
+            <!-- Step 3: Dynamic content based on selection -->
+            <br/>
+            <br/>
+            <div id="step-3" style="display: none;">
+                <h4 style="color:var(--primary)">Step 3: Additional options</h4>
+                <div id="step-3-content">
+                </div> <!-- Dynamic content will be loaded here -->
+            </div>
 
-        <!-- Add buttons for navigation -->
-        <div class="mt-4 mb-4">
+            <!-- Add buttons for navigation -->
+            <div class="mt-4 mb-4">
             <a href="/gui/convert/result">
-                <button id="next-button" class="btn btn-primary" style="display: none;float:right;">Next</button>
+                <button id="next-button" type="submit" class="btn btn-primary" style="display: none; float:right;">Next</button>
             </a>
         </div>
+        </form>
     </div>
 
     <style>
@@ -95,11 +98,19 @@
     </style>
 
     <script>
+        const levels = {
+            "function": "Function",
+            "gate": "Gate",
+            "crn": "CRN",
+            "dsd": "DSD System",
+            "dna": "DNA Strands"
+        }
+
         const conversionOptions = {
-            function: ["Gate", "CRN", "DSD System", "DNA Strands"],
-            gate: ["CRN", "DSD System", "DNA Strands"],
-            crn: ["DSD System", "DNA Strands"],
-            dsd: ["DNA Strands"]
+            function: [ levels["gate"], levels["crn"], levels["dsd"], levels["dna"] ],
+            gate: [ levels["crn"], levels["dsd"], levels["dna"] ],
+            crn: [ levels["dsd"], levels["dna"] ],
+            dsd: [ levels["dna"] ],
         };
 
         const fromLevelInput = document.getElementById("from-level");
@@ -127,12 +138,14 @@
                 // Populate Step 2 options based on the selected "from" value
                 if (conversionOptions[fromValue]) {
                     conversionOptions[fromValue].forEach(option => {
+                        let fromKey = findKeyByValue(levels, option)
+
                         const colDiv = document.createElement("div");
                         colDiv.classList.add("col-md-3");
 
                         const cardDiv = document.createElement("div");
                         cardDiv.classList.add("card", "convert-card-step-2");
-                        cardDiv.setAttribute("data-value", option);
+                        cardDiv.setAttribute("data-value", fromKey);
 
                         const cardBody = document.createElement("div");
                         cardBody.classList.add("card-body");
@@ -206,7 +219,7 @@
                     // Display a simple text box for CRN or DSD
                     step3Content.innerHTML = `
                         <p style='color:var(--secondary)'>Enter CRN or DSD details</p>
-                        <textarea class="form-control" rows="5" placeholder="A + B -> C"></textarea>
+                        <textarea class="form-control" rows="5" name="CRN_DSD_Input" placeholder="A + B -> C"></textarea>
                     `;
                 }
 
@@ -220,5 +233,17 @@
         nextButton.addEventListener("click", function () {
             alert("Proceeding to the next step...");
         });
+
+        function findKeyByValue(obj, value) {
+            // Loop through the object keys
+            for (let key in obj) {
+                // If the value matches, return the key
+                if (obj[key] === value) {
+                    return key;
+                }
+            }
+            // If no key is found, return null or any appropriate fallback value
+            return null;
+        }
     </script>
 {% endblock %}

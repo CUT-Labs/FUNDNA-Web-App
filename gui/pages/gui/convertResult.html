@@ -11,17 +11,23 @@
 {% endblock %}
 
 {% block interpretation %}
-    {% if from_level == 'function' %}
+    {% if 'function' in selected_sections %}
         {% include 'templates/partials/function.html' %}
     {% endif %}
 
-    {% if to_level == 'gates' %}
+    {% if 'gates' in selected_sections %}
         {% include 'templates/partials/gates.html' %}
-    {% elif to_level == 'crn' %}
+    {% endif %}
+
+    {% if 'crn' in selected_sections %}
         {% include 'templates/partials/crn.html' %}
-    {% elif to_level == 'dsd' %}
+    {% endif %}
+
+    {% if 'dsd' in selected_sections %}
         {% include 'templates/partials/dsd.html' %}
-    {% elif to_level == 'dna' %}
+    {% endif %}
+
+    {% if 'dna' in selected_sections %}
         {% include 'templates/partials/dna_sequence.html' %}
     {% endif %}
 {% endblock %}
