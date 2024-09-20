@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_protect
 
 from gui.methods.ConvertUtil import *
 
@@ -37,6 +38,7 @@ def convert(request):
     return render(request, 'gui/convert.html')
 
 
+@csrf_protect
 def convertResult(request):
     if request.method == 'POST':
         from_level = request.POST.get('FromLevel')
