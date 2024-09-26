@@ -4,11 +4,12 @@ from .RearrangeType import RearrangeType
 
 
 class Function:
-    def __init__(self, function, point, order, functype, title, variable):
+    def __init__(self, latex, function, point, order, functype, title, variable):
         assert FuncTypes.isIn(functype)
 
         print("Generating Function Object...")
 
+        self.latex = latex
         self.circuit = None
         self.circuitGates = None
         self.horner_coeffs = None
@@ -33,14 +34,14 @@ class Function:
         print("-" * 100)
         print("Taylor Coeffs")
         print("")
-        self.taylor_coeffs = make_taylor_coeffs(self)
+        self.taylor_coeffs = ignore_small_coeffs(make_taylor_coeffs(self))
         for index in self.taylor_coeffs:
             print(index, ": ", self.taylor_coeffs[index])
 
         print("-" * 100)
         print("Polynomial Coeffs")
         print("")
-        self.poli_coeffs = make_polynomial(self)
+        self.poli_coeffs = ignore_small_coeffs(make_polynomial(self))
         for index in self.poli_coeffs:
             print(index, ": ", self.poli_coeffs[index])
 
@@ -161,12 +162,16 @@ class Function:
             return RearrangeType.UNKNOWN
 
     def generateCircuit(self):
+        print(f'Initiating circuit generation')
         if self.rearrangeType == RearrangeType.DOUBLE_NAND:
+            print(f'\tType is DOUBLE NAND')
             self.circuit, self.circuitGates = doubleNAND_to_circuit(self)
+
         if self.rearrangeType == RearrangeType.HORNER:
+            print(f'\tType is HORNER')
             self.circuit, self.circuitGates = horner_to_circuit(self)
 
-        self.circuit.save('assets/result.svg')
+        #self.circuit.save('assets/result.svg')
 
         print("Circuit returned to function!")
 
@@ -178,7 +183,8 @@ class Function:
             raise Exception("idk what's happening, but the gates didn't make it back to the function object")
 
         if self.rearrangeType != RearrangeType.UNKNOWN:
-            show_circuit(self)
+            #show_circuit(self)
+            return self.circuit, self.circuitGates
 
     def generateReactions(self):
         if self.rearrangeType != RearrangeType.UNKNOWN:

@@ -57,9 +57,9 @@ def convertResult(request):
         # Define sections based on from and to levels
         sections = {
             ("function", "gate"): ["function", "gate"],
-            ("function", "crn"): ["function", "crn"],
-            ("function", "dsd"): ["function", "crn", "dsd"],
-            ("function", "dna"): ["function", "crn", "dsd", "dna"],
+            ("function", "crn"): ["function", "gate", "crn"],
+            ("function", "dsd"): ["function", "gate", "crn", "dsd"],
+            ("function", "dna"): ["function", "gate", "crn", "dsd", "dna"],
             ("gate", "crn"): ["gate", "crn"],
             ("gate", "dsd"): ["gate", "crn", "dsd"],
             ("gate", "dna"): ["gate", "crn", "dsd", "dna"],
@@ -83,6 +83,9 @@ def convertResult(request):
         taylorStr = ""
         rearrangement = ""
 
+        gate_url = ""
+        gate_information = ""
+
         # SECTION 1: FUNCTION
         # Approximate functions with taylor series to the degree
         # and return the point trace and est. function
@@ -92,13 +95,14 @@ def convertResult(request):
 
                 function_lambda, graph_url = functionData(latex_input)
 
-                print("Step 1:\tGenerate Function Object and Rearrangements\n\n")
-                function = gui.classes.Function(function_lambda,
-                                    float(pointEstimation),
-                                    int(degreeEstimation)+1,
-                                    determineFunctionType(latex_input),
-                                    f'FUNDNA Approximation - Point: {pointEstimation} - Degree: {degreeEstimation}',
-                                    "x")
+                print("\n\nStep 1:\tGenerate Function Object and Rearrangements\n\n")
+                function = gui.classes.Function(latex_input,
+                                                function_lambda,
+                                                float(pointEstimation),
+                                                int(degreeEstimation) + 1,
+                                                determineFunctionType(latex_input),
+                                                f'FUNDNA Approximation - Point: {pointEstimation} - Degree: {degreeEstimation}',
+                                                "x")
 
                 function.generateCoeffs()
 
@@ -108,16 +112,22 @@ def convertResult(request):
 
                 print(f'Rearrangement: {function.rearrangeString}')
                 rearrangement = sympy.latex(sympify(function.rearrangeString))
-                print(f'Rearrangement: {rearrangement}')
+                print(f'Rearrangement (LaTeX): {rearrangement}')
 
         except Exception as e:
             return HttpResponse(f"Error processing function: {str(e)}")
 
-        # # SECTION 2: GATE
-        # try:
-        #
-        # except Exception as e:
-        #     return HttpResponse(f"Error processing gates: {str(e)}")
+        # SECTION 2: GATE
+        if function is not None and function.rearrangeType is not RearrangeType.UNKNOWN:
+            print(f'\n\nStep 2:\tGenerating Gates...\n\n')
+            gate_url, gate_information = function.generateCircuit()
+
+            for gate in gate_information:
+                PrintGateInfo(gate)
+
+            print(gate_url)
+        else:
+            gate_information = ["Feature not yet implemented!"]
 
         context = {
             'from_level': from_level,
@@ -130,6 +140,12 @@ def convertResult(request):
             'maclaurin_approximation': taylorStr,
             'rearrangement_type': function.rearrangeType.value,
             'rearrangement': rearrangement,
+
+            'point': pointEstimation,
+            'estimation': function.function(float(pointEstimation)),
+
+            'gate_url': gate_url,
+            'gate_information': gate_information,
 
             'crn_dsd_input': crn_dsd_input,
         }
@@ -149,7 +165,6 @@ def simulateResult(request):
 
 def latexEditor(request):
     return render(request, 'templates/partials/latex_editor.html')
-
 
 # def index(request):
 #    return HttpResponse("Hello, world. You're at the polls index.")

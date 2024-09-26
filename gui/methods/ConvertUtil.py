@@ -114,12 +114,13 @@ def functionData(latex_input):
 
 def determineFunctionType(functionStr):
     # Convert to Function Parameter Types
-    funcType = FuncTypes.SINUSOIDAL
+    print("functionstr:\t", functionStr)
+    funcType = None
     if functionStr.__contains__("log"):
         funcType = FuncTypes.LOGARITHMIC
-    if functionStr.__contains__("exp"):
+    elif functionStr.__contains__("exp"):
         funcType = FuncTypes.EXPONENTIAL
-    if functionStr.__contains__("sin") or \
+    elif functionStr.__contains__("sin") or \
             functionStr.__contains__("cos") or \
             functionStr.__contains__("tan") or \
             functionStr.__contains__("csc") or \
@@ -135,4 +136,5 @@ def determineFunctionType(functionStr):
     else:
         funcType = FuncTypes.POLYNOMIAL
 
+    print("functype:\t", funcType.value)
     return funcType

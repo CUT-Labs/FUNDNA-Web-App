@@ -65,3 +65,14 @@ class Gate:
         self.outputs = [output]
         self.outputTypes = [outputType]
         self.index = index
+
+    def output_string(self):
+        output = ""
+
+        for o, t in zip(self.outputs, self.outputTypes):
+            if t is None:
+                output += "f(x)"
+            else:
+                output += f'{o} ({t.value})'
+
+        return output
