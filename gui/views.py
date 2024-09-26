@@ -86,6 +86,9 @@ def convertResult(request):
         gate_url = ""
         gate_information = ""
 
+        crn = None
+        crn_table = ""
+
         # SECTION 1: FUNCTION
         # Approximate functions with taylor series to the degree
         # and return the point trace and est. function
@@ -128,16 +131,28 @@ def convertResult(request):
             return HttpResponse(f"Error processing function: {str(err)}")
 
         # SECTION 2: GATE
-        if function is not None and function.rearrangeType is not RearrangeType.UNKNOWN:
-            print(f'\n\nStep 2:\tGenerating Gates...\n\n')
-            gate_url, gate_information = function.generateCircuit()
+        try:
+            if function is not None and function.rearrangeType is not RearrangeType.UNKNOWN:
+                print(f'\n\nStep 2:\tGenerating Gates...\n\n')
+                gate_url, gate_information = function.generateCircuit()
 
-            for gate in gate_information:
-                PrintGateInfo(gate)
+                for gate in gate_information:
+                    PrintGateInfo(gate)
 
-            print(gate_url)
-        else:
-            gate_information = ["Feature not yet implemented!"]
+                print(gate_url)
+            else:
+                gate_information = ["Feature not yet implemented!"]
+        except Exception as err:
+            return HttpResponse(f"Error processing gates: {str(err)}")
+
+        # SECTION 3: CRN
+        try:
+            if function is not None:
+                crn, crn_table = function.generateReactions()
+            elif crn_dsd_input is not None and from_level == 'crn':
+                crn_table = crn_dsd_input
+        except Exception as err:
+            return HttpResponse(f"Error processing CRN: {str(err)}")
 
         context = {
             'from_level': from_level,
@@ -157,7 +172,8 @@ def convertResult(request):
             'gate_url': gate_url,
             'gate_information': gate_information,
 
-            'crn_dsd_input': crn_dsd_input,
+            'crn': crn,
+            'crn_table': crn_table,
         }
 
         return render(request, 'gui/convertResult.html', context)

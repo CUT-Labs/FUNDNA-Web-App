@@ -190,6 +190,8 @@ class Function:
         if self.rearrangeType != RearrangeType.UNKNOWN:
             self.CRN, self.GUIReactionTable = make_reactions(self)
 
+        return self.CRN, self.GUIReactionTable
+
     def generateTrace(self):
         if self.rearrangeType == RearrangeType.DOUBLE_NAND:
             self.traceString = doubleNANDFunctionToStr(self, 1)

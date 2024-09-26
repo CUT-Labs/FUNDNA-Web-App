@@ -665,22 +665,22 @@ def make_reactions(func):
             if type(inputs[1]) is not str and inputs[1] is not None:
                 inputs[1] = str(round(inputs[1], 4))
 
-            if gateType == GateTypes.AND:
-                gateTypeStr = "M-AND"
-            else:
-                gateTypeStr = "M-NAND"
-
-            reactionStr += gateName + "(" + gateTypeStr + ")\n"
-            reactionStr += "Inputs: " + inputs[0] + ", " + inputs[1] + "\n"
-            reactionStr += "Output(s) To: "
-
-            for output in outputs:
-                if output != outputs[0]:
-                    reactionStr += ", " + output
-                else:
-                    reactionStr += " " + output
-
-            reactionStr += "\n\nReaction Table:\n"
+            # if gateType == GateTypes.AND:
+            #     gateTypeStr = "M-AND"
+            # else:
+            #     gateTypeStr = "M-NAND"
+            #
+            # reactionStr += gateName + "(" + gateTypeStr + ")\n"
+            # reactionStr += "Inputs: " + inputs[0] + ", " + inputs[1] + "\n"
+            # reactionStr += "Output(s) To: "
+            #
+            # for output in outputs:
+            #     if output != outputs[0]:
+            #         reactionStr += ", " + output
+            #     else:
+            #         reactionStr += " " + output
+            #
+            # reactionStr += "\n\nReaction Table:\n"
 
             gateReactionSet = make_reaction(gateType, inputs, gateName)
 
@@ -688,9 +688,10 @@ def make_reactions(func):
                 crn.AddReaction(r)
                 print(r)
                 reactionStr += r + "\n"
-            print("-" * 100)
+            # print("-" * 100)
+            reactionStr += "\n"
 
-            reactionStr += "-" * 85 + "\n"
+            # reactionStr += "-" * 85 + "\n"
 
     print("\n\n\n\n\tREACTION STATEMENTS!!\n")
     print(reactionStr)
