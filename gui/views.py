@@ -89,6 +89,10 @@ def convertResult(request):
         crn = None
         crn_table = ""
 
+        rearrangementType = None
+
+        estimation = 0
+
         # SECTION 1: FUNCTION
         # Approximate functions with taylor series to the degree
         # and return the point trace and est. function
@@ -116,6 +120,9 @@ def convertResult(request):
                 print(f'Rearrangement: {function.rearrangeString}')
                 rearrangement = sympy.latex(sympify(function.rearrangeString))
                 print(f'Rearrangement (LaTeX): {rearrangement}')
+
+                rearrangementType = function.rearrangeType.value
+                estimation = function.function(pointEstimation)
 
                 if rearrangement is not None:
                     lExpress = "lambda " + function.variable + ": " + function.rearrangeString
@@ -151,6 +158,13 @@ def convertResult(request):
                 crn, crn_table = function.generateReactions()
             elif crn_dsd_input is not None and from_level == 'crn':
                 crn_table = crn_dsd_input
+                crn = CRN()
+
+                for reaction in crn_table.split(";"):
+                    if reaction != "":
+                        for r in reaction.split("\n"):
+                            print(r)
+                            crn.AddReaction(r)
         except Exception as err:
             return HttpResponse(f"Error processing CRN: {str(err)}")
 
@@ -163,11 +177,11 @@ def convertResult(request):
             'graph_url': graph_url,
 
             'maclaurin_approximation': taylorStr,
-            'rearrangement_type': function.rearrangeType.value,
+            'rearrangement_type': rearrangementType,
             'rearrangement': rearrangement,
 
             'point': pointEstimation,
-            'estimation': function.function(pointEstimation),
+            'estimation': estimation,
 
             'gate_url': gate_url,
             'gate_information': gate_information,

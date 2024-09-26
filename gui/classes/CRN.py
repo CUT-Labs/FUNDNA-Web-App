@@ -9,12 +9,17 @@ class CRN:
         assert type(reaction) is str
         self.crn_array.append(reaction)
 
+        self.CountSpecies()
+
     def CountSpecies(self):
         # Count each distinct gate in the entire CRN
         for reaction in self.crn_array:
             reactants, products = reaction.split("->")
             all_gates = reactants.split() + products.split()
-            self.gates.update(all_gates)
+            for g in all_gates:
+                if not self.gates.__contains__(g) and g != "+":
+                    print(g)
+                    self.gates.update(g)
         return len(self.gates)
 
     def HasFile(self):
