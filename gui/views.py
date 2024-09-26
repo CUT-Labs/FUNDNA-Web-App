@@ -3,6 +3,14 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 
 from gui.methods.ConvertUtil import *
+from gui.methods.FUNDNAUtil import *
+from gui.classes import *
+
+import gui as gui
+
+import sympy
+import sympy as sp
+from sympy import sympify
 
 """
     EXAMPLE:
@@ -51,7 +59,7 @@ def convertResult(request):
             ("function", "gate"): ["function", "gate"],
             ("function", "crn"): ["function", "crn"],
             ("function", "dsd"): ["function", "crn", "dsd"],
-            ("function", "dna"): ["function", "crn", "dsd", "dna_sequence"],
+            ("function", "dna"): ["function", "crn", "dsd", "dna"],
             ("gate", "crn"): ["gate", "crn"],
             ("gate", "dsd"): ["gate", "crn", "dsd"],
             ("gate", "dna"): ["gate", "crn", "dsd", "dna"],
@@ -60,40 +68,70 @@ def convertResult(request):
             ("dsd", "dna"): ["dsd", "dna"],
         }
 
+        pointEstimation = request.POST.get('PointEstimation', 0)
+        degreeEstimation = request.POST.get('DegreeEstimation', 5)
+
         selected_sections = sections.get((from_level, to_level), [])
 
-        function_data = []
+        function = None
         graph_url = None
 
         print(selected_sections)
         print('--')
         print(latex_input)
 
+        taylorStr = ""
+        rearrangement = ""
+
+        # SECTION 1: FUNCTION
+        # Approximate functions with taylor series to the degree
+        # and return the point trace and est. function
         try:
             if 'function' in selected_sections and latex_input:
                 print("Loading function approximation...")
 
-                # Convert LaTeX to lambda and generate points
-                function_lambda = LatexToLambda(latex_input)
-                x_values, y_values = generatePoints(function_lambda)
+                function_lambda, graph_url = functionData(latex_input)
 
-                # Generate graph image
-                graph = generateGraph(x_values, y_values)
+                print("Step 1:\tGenerate Function Object and Rearrangements\n\n")
+                function = gui.classes.Function(function_lambda,
+                                    float(pointEstimation),
+                                    int(degreeEstimation)+1,
+                                    determineFunctionType(latex_input),
+                                    f'FUNDNA Approximation - Point: {pointEstimation} - Degree: {degreeEstimation}',
+                                    "x")
 
-                # Encode graph in base64 for rendering in the template
-                graph_url = "data:image/svg+xml;base64," + base64.b64encode(graph.getvalue()).decode()
+                function.generateCoeffs()
+
+                print(f'Taylor Approximation: {function.taylorString}')
+                taylorStr = sympy.latex(sympify(function.taylorString))
+                print(f'Taylor Approximation (LaTeX): {taylorStr}')
+
+                print(f'Rearrangement: {function.rearrangeString}')
+                rearrangement = sympy.latex(sympify(function.rearrangeString))
+                print(f'Rearrangement: {rearrangement}')
 
         except Exception as e:
             return HttpResponse(f"Error processing function: {str(e)}")
 
+        # # SECTION 2: GATE
+        # try:
+        #
+        # except Exception as e:
+        #     return HttpResponse(f"Error processing gates: {str(e)}")
+
         context = {
             'from_level': from_level,
             'to_level': to_level,
+            'selected_sections': selected_sections,
+
             'latex_input': latex_input,
-            'function_data': function_data,
-            'graph_url': graph_url,  # Pass the graph URL to the template
+            'graph_url': graph_url,
+
+            'maclaurin_approximation': taylorStr,
+            'rearrangement_type': function.rearrangeType.value,
+            'rearrangement': rearrangement,
+
             'crn_dsd_input': crn_dsd_input,
-            'selected_sections': selected_sections
         }
 
         return render(request, 'gui/convertResult.html', context)

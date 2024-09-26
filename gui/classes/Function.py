@@ -7,6 +7,8 @@ class Function:
     def __init__(self, function, point, order, functype, title, variable):
         assert FuncTypes.isIn(functype)
 
+        print("Generating Function Object...")
+
         self.circuit = None
         self.circuitGates = None
         self.horner_coeffs = None

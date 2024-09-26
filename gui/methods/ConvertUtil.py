@@ -9,6 +9,9 @@ import base64
 import sympy as sp
 from sympy.parsing.latex import parse_latex
 
+from gui.classes import *
+from gui.methods import *
+
 matplotlib.use('Agg')  # Use the Agg backend for rendering graphs in Django
 
 
@@ -93,3 +96,43 @@ def LatexToLambda(latex_expr):
         raise ValueError(f"Error converting LaTeX to lambda: {str(e)}")
 
     return lambda_function
+
+
+def functionData(latex_input):
+    # Convert LaTeX to lambda and generate points
+    function_lambda = LatexToLambda(latex_input)
+    x_values, y_values = generatePoints(function_lambda)
+
+    # Generate graph image
+    graph = generateGraph(x_values, y_values)
+
+    # Encode graph in base64 for rendering in the template
+    graph_url = "data:image/svg+xml;base64," + base64.b64encode(graph.getvalue()).decode()
+
+    return function_lambda, graph_url
+
+
+def determineFunctionType(functionStr):
+    # Convert to Function Parameter Types
+    funcType = FuncTypes.SINUSOIDAL
+    if functionStr.__contains__("log"):
+        funcType = FuncTypes.LOGARITHMIC
+    if functionStr.__contains__("exp"):
+        funcType = FuncTypes.EXPONENTIAL
+    if functionStr.__contains__("sin") or \
+            functionStr.__contains__("cos") or \
+            functionStr.__contains__("tan") or \
+            functionStr.__contains__("csc") or \
+            functionStr.__contains__("cot") or \
+            functionStr.__contains__("sec") or \
+            functionStr.__contains__("cosh") or \
+            functionStr.__contains__("sinh") or \
+            functionStr.__contains__("csch") or \
+            functionStr.__contains__("coth") or \
+            functionStr.__contains__("sech") or \
+            functionStr.__contains__("tanh"):
+        funcType = FuncTypes.SINUSOIDAL
+    else:
+        funcType = FuncTypes.POLYNOMIAL
+
+    return funcType

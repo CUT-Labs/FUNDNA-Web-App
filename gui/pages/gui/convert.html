@@ -192,7 +192,31 @@
                     fetch('latex-editor')
                     .then(response => response.text())
                     .then(html => {
-                        step3Content.innerHTML = html;
+                        let toAdd = html + `
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <label style="width:100%;padding-right:0!important;" for="PointEstimation">Enter Point Estimation:</label>
+                                    <small style="color:gray">Use a number between 0 and 1 (i.e., 0.005 or 0.5)</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <input style="width:100%;padding-right:0!important;margin-bottom:20px!important;" class="mq-editable-field" type="number" min="0" max="1" step="0.0001" name="PointEstimation" value="0.5">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <label style="width:100%;padding-right:0!important;" for="DegreeEstimation">Degree Estimation:</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <input style="width:100%;padding-right:0!important;"  class="mq-editable-field" type="number" min="0" step="1" name="DegreeEstimation" value="5">
+                                </div>
+                            </div>
+                        </div>`;
+                        step3Content.innerHTML = toAdd;
 
                         // Initialize MathQuill after content is loaded
                         var MQ = MathQuill.getInterface(2);
