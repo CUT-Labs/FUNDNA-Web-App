@@ -7,27 +7,32 @@
 {% endblock %}
 
 {% block description %}
-    <p>You have selected to convert from {{ from_level }} to {{ to_level }}.</p>
+    <p>These represent estimates in converting between each selected level of molecular computing. Converting from one stage to another typically leads to error, so please use caution in interpreting these results.</p>
 {% endblock %}
 
 {% block interpretation %}
     {% if 'function' in selected_sections %}
         {% include 'templates/partials/function.html' %}
+        <hr/>
     {% endif %}
 
     {% if 'gate' in selected_sections %}
         {% include 'templates/partials/gates.html' %}
+        <hr/>
     {% endif %}
 
     {% if 'crn' in selected_sections %}
         {% include 'templates/partials/crn.html' %}
+        <hr/>
     {% endif %}
 
     {% if 'dsd' in selected_sections %}
         {% include 'templates/partials/dsd.html' %}
+        <hr/>
     {% endif %}
 
     {% if 'dna' in selected_sections %}
         {% include 'templates/partials/dna_sequence.html' %}
+        <hr/>
     {% endif %}
 {% endblock %}

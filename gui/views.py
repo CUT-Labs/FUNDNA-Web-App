@@ -68,8 +68,8 @@ def convertResult(request):
             ("dsd", "dna"): ["dsd", "dna"],
         }
 
-        pointEstimation = request.POST.get('PointEstimation', 0)
-        degreeEstimation = request.POST.get('DegreeEstimation', 5)
+        pointEstimation = float(request.POST.get('PointEstimation', 0))
+        degreeEstimation = int(request.POST.get('DegreeEstimation', 5))
 
         selected_sections = sections.get((from_level, to_level), [])
 
@@ -98,8 +98,8 @@ def convertResult(request):
                 print("\n\nStep 1:\tGenerate Function Object and Rearrangements\n\n")
                 function = gui.classes.Function(latex_input,
                                                 function_lambda,
-                                                float(pointEstimation),
-                                                int(degreeEstimation) + 1,
+                                                pointEstimation,
+                                                degreeEstimation + 1,
                                                 determineFunctionType(latex_input),
                                                 f'FUNDNA Approximation - Point: {pointEstimation} - Degree: {degreeEstimation}',
                                                 "x")
@@ -114,8 +114,18 @@ def convertResult(request):
                 rearrangement = sympy.latex(sympify(function.rearrangeString))
                 print(f'Rearrangement (LaTeX): {rearrangement}')
 
-        except Exception as e:
-            return HttpResponse(f"Error processing function: {str(e)}")
+                if rearrangement is not None:
+                    lExpress = "lambda " + function.variable + ": " + function.rearrangeString
+                    # lambda x: sin(x)
+                    rearrLambda = eval(lExpress)
+
+                    graph_url = graphOriginalAndRearrangement(LatexToLambda(latex_input),
+                                                              rearrLambda,
+                                                              pointEstimation,
+                                                              degreeEstimation)
+
+        except Exception as err:
+            return HttpResponse(f"Error processing function: {str(err)}")
 
         # SECTION 2: GATE
         if function is not None and function.rearrangeType is not RearrangeType.UNKNOWN:
@@ -142,7 +152,7 @@ def convertResult(request):
             'rearrangement': rearrangement,
 
             'point': pointEstimation,
-            'estimation': function.function(float(pointEstimation)),
+            'estimation': function.function(pointEstimation),
 
             'gate_url': gate_url,
             'gate_information': gate_information,
