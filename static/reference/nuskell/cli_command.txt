@@ -1,0 +1,1 @@
+echo "A + B -> C; C + D -> E + F" | nuskell --ts soloveichik2010.ts --pilfile -vv --enum-detailed --enumerate --logfile nuskellCLI.txt

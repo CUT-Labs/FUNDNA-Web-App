@@ -1,8 +1,135 @@
-<div class="row">
-    <h5>DSD System</h5>
-    <p>Translation Scheme: {{ translation_scheme }}</p>
-    <pre><code>
-    {{ dsd_system_output }}
-    </code></pre>
-    <p>Generated using the Nuskell command: <code>{{ nuskell_command }}</code></p>
+{% load static %}
+<div class="row mb-4">
+    <h5>DSD Simulation Results:</h5>
+    <div class="col-md-12">
+        <!-- Domain Specifications Section -->
+        <div class="card border-primary mb-3">
+            <div class="card-body">
+                <h6 class="card-title">Domain Specifications:</h6>
+                <ul class="list-group">
+                    {% for domain in nuskell_output.domains %}
+                        <li class="list-group-item">
+                            <strong>{{ domain.0 }}:</strong> {{ domain.1 }} nt
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Signal Complexes Section -->
+        <div class="card border-secondary mb-3">
+            <div class="card-body">
+                <h6 class="card-title">Signal Complexes:</h6>
+                <div class="signal-complexes">
+                    {% for signal in nuskell_output.species.signal %}
+                        <div class="signal-complex mb-3">
+                            <strong>{{ signal.0 }}:</strong>
+                            <div class="chevron-container">
+                                {% for domain in signal.1.split %}  <!-- Split signal structure -->
+                                    <div class="chevron" title="{{ domain }}">
+                                        <span class="domain-label">{{ domain }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Fuel Complexes Section -->
+        <div class="card border-success mb-3">
+            <div class="card-body">
+                <h6 class="card-title">Fuel Complexes:</h6>
+                <ul class="list-group">
+                    {% for fuel in nuskell_output.species.fuel %}
+                        <li class="list-group-item">
+                            <strong>{{ fuel.0 }}:</strong>
+                            <code>{{ fuel.1 }}</code>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Other Complexes Section -->
+        <div class="card border-warning mb-3">
+            <div class="card-body">
+                <h6 class="card-title">Other Complexes:</h6>
+                <ul class="list-group">
+                    {% for other in nuskell_output.species.other %}
+                        <li class="list-group-item">
+                            <strong>{{ other.0 }}:</strong>
+                            <code>{{ other.1 }}</code>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Reactions Section -->
+        <div class="card border-danger mb-3">
+            <div class="card-body">
+                <h6 class="card-title">Reactions:</h6>
+                <ul class="list-group">
+                    {% for reaction in nuskell_output.reactions %}
+                        <li class="list-group-item">
+                            <strong>{{ reaction.0 }}</strong>
+                            [Rate constant: {{ reaction.1 }}]
+                            <br>
+                            <code>{{ reaction.2 }}</code>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .chevron-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .chevron {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 30px;
+        margin-right: 5px;
+        background-color: transparent; /* Transparent background */
+        border: 2px solid var(--primary); /* Border color using --primary */
+        clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+        text-align: center;
+        font-size: 0.8rem;
+    }
+
+    .chevron .domain-label {
+        color: var(--primary);
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .chevron::before {
+        content: attr(title);
+        position: absolute;
+        bottom: -18px;
+        font-size: 0.7rem;
+        font-weight: normal;
+        color: var(--primary);
+    }
+
+    .signal-complex {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .signal-complex strong {
+        margin-bottom: 5px;
+    }
+</style>

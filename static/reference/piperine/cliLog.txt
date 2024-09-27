@@ -1,0 +1,168 @@
+Designing sequences candidate index 0.
+Sequences written to: /Users/jhuse01/Desktop/CUT Labs/FUNDNA/build/tests/piperine/my0.seqs
+Strand identities written to: /Users/jhuse01/Desktop/CUT Labs/FUNDNA/build/tests/piperine/my0_strands.txt
+Start WSI computation
+DONE
+
+Calculating Top Strand Pairwise interactions
+Begin
+Progress : 10.83%
+Progress : 21.67%
+Progress : 32.50%
+Progress : 43.33%
+Progress : 54.17%
+Progress : 65.00%
+Progress : 75.83%
+Progress : 86.67%
+Progress : 97.50%
+DONE
+
+Calculating Toehold occupation
+Begin
+Progress : 10.49%
+Progress : 20.98%
+Progress : 31.47%
+Progress : 41.96%
+Progress : 52.45%
+Progress : 62.94%
+Progress : 73.43%
+Progress : 83.92%
+Progress : 94.41%
+DONE
+
+Start bad nucleotide percent computation
+Begin
+Progress : 14.29%
+Progress : 28.57%
+Progress : 42.86%
+Progress : 57.14%
+Progress : 71.43%
+Progress : 85.71%
+Progress : 100.00%
+DONE
+
+Start BM score computation
+Begin
+Progress : 10.91%
+Progress : 21.82%
+Progress : 32.73%
+Progress : 43.64%
+Progress : 54.55%
+Progress : 65.45%
+Progress : 76.36%
+Progress : 87.27%
+Progress : 98.18%
+DONE
+
+Start Single-Strand spurious score computation
+Begin
+Progress : 16.67%
+Progress : 33.33%
+Progress : 50.00%
+Progress : 66.67%
+Progress : 83.33%
+Progress : 100.00%
+DONE
+
+Designing sequences candidate index 1.
+Sequences written to: /Users/jhuse01/Desktop/CUT Labs/FUNDNA/build/tests/piperine/my1.seqs
+Strand identities written to: /Users/jhuse01/Desktop/CUT Labs/FUNDNA/build/tests/piperine/my1_strands.txt
+Start WSI computation
+DONE
+
+Calculating Top Strand Pairwise interactions
+Begin
+Progress : 10.83%
+Progress : 21.67%
+Progress : 32.50%
+Progress : 43.33%
+Progress : 54.17%
+Progress : 65.00%
+Progress : 75.83%
+Progress : 86.67%
+Progress : 97.50%
+DONE
+
+Calculating Toehold occupation
+Begin
+Progress : 10.50%
+Progress : 21.00%
+Progress : 31.50%
+Progress : 42.00%
+Progress : 52.50%
+Progress : 63.00%
+Progress : 73.50%
+Progress : 84.00%
+Progress : 94.50%
+DONE
+
+Start bad nucleotide percent computation
+Begin
+Progress : 14.29%
+Progress : 28.57%
+Progress : 42.86%
+Progress : 57.14%
+Progress : 71.43%
+Progress : 85.71%
+Progress : 100.00%
+DONE
+
+Start BM score computation
+Begin
+Progress : 10.91%
+Progress : 21.82%
+Progress : 32.73%
+Progress : 43.64%
+Progress : 54.55%
+Progress : 65.45%
+Progress : 76.36%
+Progress : 87.27%
+Progress : 98.18%
+DONE
+
+Start Single-Strand spurious score computation
+Begin
+Progress : 16.67%
+Progress : 33.33%
+Progress : 50.00%
+Progress : 66.67%
+Progress : 83.33%
+Progress : 100.00%
+DONE
+
+Designing sequences candidate index 2.
+Sequences written to: /Users/jhuse01/Desktop/CUT Labs/FUNDNA/build/tests/piperine/my2.seqs
+Strand identities written to: /Users/jhuse01/Desktop/CUT Labs/FUNDNA/build/tests/piperine/my2_strands.txt
+Start WSI computation
+DONE
+
+Calculating Top Strand Pairwise interactions
+Begin
+Progress : 10.83%
+Progress : 21.67%
+Progress : 32.50%
+Progress : 43.33%
+Progress : 54.17%
+Progress : 65.00%
+Progress : 75.83%
+Progress : 86.67%
+Progress : 97.50%
+DONE
+
+Calculating Toehold occupation
+Begin
+Progress : 10.12%
+Progress : 20.23%
+Progress : 30.35%
+Progress : 40.47%
+Progress : 50.58%
+Progress : 60.70%
+Progress : 70.82%
+Progress : 80.93%
+Progress : 91.05%
+DONE
+
+Start bad nucleotide percent computation
+Begin
+Progress : 14.29%
+Progress : 28.57%

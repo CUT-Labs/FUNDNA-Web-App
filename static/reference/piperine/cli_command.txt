@@ -1,0 +1,1 @@
+/Library/Frameworks/Python.framework/Versions/3.12/bin/piperine-design '/Users/jhuse01/Desktop/CUT Labs/FUNDNA/build/tests/piperine/my.crn' --candidates 3 --energy 7.5 --maxspurious 0.64 --deviation 0.47

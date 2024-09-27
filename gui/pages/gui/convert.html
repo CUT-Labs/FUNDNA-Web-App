@@ -240,11 +240,74 @@
                         <p>Here we will configure Gate-related conversions.</p>
                     `;
                 } else if (fromValue === 'crn' || fromValue === 'dsd') {
-                    // Display a simple text box for CRN or DSD
-                    step3Content.innerHTML = `
+                    let textareaHTML = `
                         <p style='color:var(--secondary)'>Enter CRN or DSD details. Please separate reactions by new line or semi-colon (';').</p>
                         <textarea class="form-control" rows="5" name="CRN_DSD_Input" placeholder="A + B -> C"></textarea>
                     `;
+
+                    if (fromValue === 'crn') {
+                        step3Content.innerHTML = `
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="nuskell_verify" name="nuskell_verify">
+                                        <label class="form-check-label" for="nuskell_verify">Verify with CRN Bisimulation</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row mt-3 mb-3">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="nuskell_scheme">Select Scheme:</label>
+                                        <select class="form-control" id="nuskell_scheme" name="nuskell_scheme">
+                                            <!-- Development -->
+                                            <option value="cardelli_2domain_fixed_dev.ts">cardelli_2domain_fixed_dev.ts</option>
+                                            <option value="cardelli_2domain_fixed_noGC_dev.ts">cardelli_2domain_fixed_noGC_dev.ts</option>
+                                            <option value="lakin2016_3D_fix_dev.ts">lakin2016_3D_fix_dev.ts</option>
+                                            <option value="mehta_3domain_dev.ts">mehta_3domain_dev.ts</option>
+                                            <option value="soloveichik_cooperative_dev.ts">soloveichik_cooperative_dev.ts</option>
+                                            <option value="soloveichik_opt_dev.ts">soloveichik_opt_dev.ts</option>
+                                            <option value="thachuk_xchange_dev.ts">thachuk_xchange_dev.ts</option>
+                                            <option value="thachuk_xchange_dev.ts">thachuk_xchange_dev.ts</option>
+
+                                            <!-- Implementations -->
+                                            <option value="zhang2007_autocatalyst.pil">zhang2007_autocatalyst.pil</option>
+                                            <option value="zhang2007_catalyst.pil">zhang2007_catalyst.pil</option>
+
+                                            <!-- Literature -->
+                                            <option value="cardelli2011_FJ.ts">cardelli2011_FJ.ts</option>
+                                            <option value="cardelli2011_NM.ts">cardelli2011_NM.ts</option>
+                                            <option value="cardelli2013_2D.ts">cardelli2013_2D.ts</option>
+                                            <option value="cardelli2013_2D_2TGC.ts">cardelli2013_2D_2TGC.ts</option>
+                                            <option value="cardelli2013_2D_3I.ts">cardelli2013_2D_3I.ts</option>
+                                            <option value="chen2013_2D_JF.ts">chen2013_2D_JF.ts</option>
+                                            <option value="lakin2012_3D.ts">lakin2012_3D.ts</option>
+                                            <option value="lakin2016_2D_3I.ts">lakin2016_2D_3I.ts</option>
+                                            <option value="qian2011_3D.ts">qian2011_3D.ts</option>
+                                            <option value="soloveichik2010.ts">soloveichik2010.ts</option>
+                                            <option value="srinivas2015.ts">srinivas2015.ts</option>
+
+                                            <!-- Variants -->
+                                            <option value="cardelli2011_FJ_noGC.ts">cardelli2011_FJ_noGC.ts</option>
+                                            <option value="cardelli2011_NM_noGC.ts">cardelli2011_NM_noGC.ts</option>
+                                            <option value="cardelli2013_2D_3I_noGC.ts">cardelli2013_2D_3I_noGC.ts</option>
+                                            <option value="cardelli2013_2D_noGC.ts">cardelli2013_2D_noGC.ts</option>
+                                            <option value="chen2013_2D_JF_var1.ts">chen2013_2D_JF_var1.ts</option>
+                                            <option value="chen2013_2D_JF_var2.ts">chen2013_2D_JF_var2.ts</option>
+                                            <option value="lakin2012_3D_var1.ts">lakin2012_3D_var1.ts</option>
+                                            <option value="qian2011_3D_var1.ts">qian2011_3D_var1.ts</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                ${textareaHTML}
+                            </div>
+                        `;
+                    } else {
+
+                    }
                 }
 
                 // Show Step 3 and enable Next button

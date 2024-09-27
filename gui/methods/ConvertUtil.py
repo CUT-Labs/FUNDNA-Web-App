@@ -155,11 +155,11 @@ def graphOriginalAndRearrangement(originalFunction, rearrangementLambda, pointEs
     _, rearrangement = generatePoints(rearrangementLambda)
 
     graph_io = dualGraphWithErrors(x,
-                               rearrangement,
-                               expected,
-                               f'FUNDNA Approximation - Point: {pointEstimation} - Degree: {degreeEstimation}',
-                               "Originanl Function",
-                               "Rearrangement Function")
+                                   rearrangement,
+                                   expected,
+                                   f'FUNDNA Approximation - Point: {pointEstimation} - Degree: {degreeEstimation}',
+                                   "Originanl Function",
+                                   "Rearrangement Function")
 
     return "data:image/svg+xml;base64," + base64.b64encode(graph_io.getvalue()).decode()
 
@@ -223,3 +223,181 @@ def analyzeError(error):
     print(f"Mean Absolute Error (MAE): \t{mae}")
 
     return averageError, std_dev, ratioUnder, mse, mae
+
+
+import os
+import shutil
+import subprocess
+import tempfile
+from pathlib import Path
+
+
+def run_nuskell(crn, scheme, verify=False):
+    """
+    Runs the Nuskell command and returns the path to the temporary directory.
+
+    :param crn: The chemical reaction network (CRN) string
+    :param scheme: The scheme file to use in Nuskell
+    :param verify: Boolean indicating whether to use verification
+    :return: Path to the temporary directory containing Nuskell results
+    """
+    temp_dir = tempfile.mkdtemp(prefix="nuskell_")
+
+    # Prepare the CRN string (replace '0.' with 'c')
+    input_crn_str = crn.NuskellString().replace('0.', 'c')
+
+    # Prepare the Nuskell command
+    nuskell_command = [
+        "echo", f'"{input_crn_str}"', "|", "nuskell", "--ts", scheme, "--pilfile", "-vv",
+        "--enum-detailed", "--enumerate", "--logfile", "nuskellCLI.txt"
+    ]
+
+    if verify:
+        nuskell_command.append("--verify")
+        nuskell_command.append("crn-bisimulation")
+
+    # Join the command into a string
+    cli_string = " ".join(nuskell_command)
+
+    # Execute the command in the temporary directory
+    subprocess.run(cli_string, shell=True, cwd=temp_dir)
+
+    return temp_dir
+
+
+def process_nuskell_output(temp_dir):
+    result = {}
+    species = {
+        'signal': [],  # store each signal as a tuple (e.g., ('C_1_', 'd25 t7 d8 t9'))
+        'fuel': [],
+        # store each fuel as a tuple (e.g., ('f1', 'd2( t3( t4( + d5( t6( d25 t7 + ) ) ) ) ) t1* @constant 100 nM'))
+        'other': []  # store each other as a tuple (e.g., ('i17', 'd11 t12 d26 t13 d27 t16'))
+    }
+    domains = []  # store each domain as a tuple (e.g., ('d11', '15'))
+    reactions = []  # store each reaction as a tuple (e.g., ('bind21', '0.0015 /nM/s', 'i17 + f5 -> i20'))
+
+    enum_pil_path = Path(temp_dir) / "domainlevel_enum.pil"
+
+    if not enum_pil_path.exists():
+        return result  # Return an empty result if the file doesn't exist
+
+    with open(enum_pil_path, "r") as file:
+        lines = file.readlines()
+
+    parsing_domains = False
+    parsing_signal = False
+    parsing_fuel = False
+    parsing_other = False
+    parsing_reactions = False
+
+    for line in lines:
+        line = line.strip()
+
+        # Step 2: Start parsing domain information
+        if line.startswith("# Domain Specifications"):
+            parsing_domains = True
+            continue
+
+        if parsing_domains and line == "":
+            parsing_domains = False
+            continue
+
+        if parsing_domains:
+            if "length" in line:
+                parts = line.split()
+                domain_name = parts[1]
+                domain_length = parts[3]
+                domains.append((domain_name, domain_length))
+
+        # Step 3: Start parsing signal complexes
+        if line.startswith("# Signal complexes"):
+            parsing_signal = True
+            continue
+
+        if parsing_signal and line == "":
+            parsing_signal = False
+            continue
+
+        if parsing_signal:
+            if "=" in line:
+                parts = line.split("=")
+                species_name = parts[0].strip()
+                species_structure = parts[1].strip()
+                species['signal'].append((species_name, species_structure))
+
+        # Step 3: Start parsing fuel complexes
+        if line.startswith("# Fuel complexes"):
+            parsing_fuel = True
+            continue
+
+        if parsing_fuel and line == "":
+            parsing_fuel = False
+            continue
+
+        if parsing_fuel:
+            if "=" in line:
+                parts = line.split("=")
+                fuel_name = parts[0].strip()
+                fuel_structure = parts[1].strip()
+                species['fuel'].append((fuel_name, fuel_structure))
+
+        # Step 3: Start parsing other complexes
+        if line.startswith("# Other complexes"):
+            parsing_other = True
+            continue
+
+        if parsing_other and line == "":
+            parsing_other = False
+            continue
+
+        if parsing_other:
+            if "=" in line:
+                parts = line.split("=")
+                other_name = parts[0].strip()
+                other_structure = parts[1].strip()
+                species['other'].append((other_name, other_structure))
+
+        # Step 4: Start parsing reactions
+        if line.startswith("# Reactions"):
+            parsing_reactions = True
+            continue
+
+        if parsing_reactions and line == "":
+            parsing_reactions = False
+            continue
+
+        if parsing_reactions:
+            if line.startswith("reaction"):
+                parts = line.split("]")
+                reaction_info = parts[0].split("[")[1].strip()
+                reaction_type, rate_constant = reaction_info.split("=")
+                reaction_type = reaction_type.strip()
+                rate_constant = rate_constant.strip()
+
+                reaction_equation = parts[1].strip()
+                reactions.append((reaction_type, rate_constant, reaction_equation))
+
+    # Step 5: Store results
+    result['domains'] = domains
+    result['species'] = species
+    result['reactions'] = reactions
+
+    return result
+
+
+def convert_to_latex(line):
+    """
+    Converts a reaction line into a LaTeX-formatted reaction.
+    Modify this logic based on actual file content.
+    """
+    return line.replace("->", r"\rightarrow")
+
+
+def cleanup_temp_dir(temp_dir):
+    """
+    Cleans up the temporary directory after processing is complete.
+
+    :param temp_dir: Path to the temporary directory to delete
+    """
+    if os.path.exists(temp_dir):
+        shutil.rmtree(temp_dir)

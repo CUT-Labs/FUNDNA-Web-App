@@ -71,6 +71,9 @@ def convertResult(request):
         pointEstimation = float(request.POST.get('PointEstimation', 0))
         degreeEstimation = int(request.POST.get('DegreeEstimation', 5))
 
+        scheme = request.POST.get('nuskell_scheme', 'soloveichik2010.ts')
+        verify = request.POST.get('nuskell_verify', False)
+
         selected_sections = sections.get((from_level, to_level), [])
 
         function = None
@@ -92,6 +95,8 @@ def convertResult(request):
         rearrangementType = None
 
         estimation = 0
+
+        nuskell_output = None
 
         # SECTION 1: FUNCTION
         # Approximate functions with taylor series to the degree
@@ -168,6 +173,25 @@ def convertResult(request):
         except Exception as err:
             return HttpResponse(f"Error processing CRN: {str(err)}")
 
+        # SECTION 4: DSD
+        # Handle CRN/DSD conversion using Nuskell
+        try:
+            # Create CRN object
+            if crn is not None:
+                # Run Nuskell and get the temp directory
+                temp_dir = run_nuskell(crn, scheme, verify)
+
+                # Process the Nuskell output files
+                nuskell_output = process_nuskell_output(temp_dir)
+
+                print(nuskell_output)
+
+                # Cleanup the temporary directory
+                cleanup_temp_dir(temp_dir)
+        except Exception as err:
+            return HttpResponse(f"Error processing Nuskell: {str(err)}")
+
+
         context = {
             'from_level': from_level,
             'to_level': to_level,
@@ -188,6 +212,8 @@ def convertResult(request):
 
             'crn': crn,
             'crn_table': crn_table,
+
+            'nuskell_output': nuskell_output,  # Includes enum_data, sys_data, and log_data
         }
 
         return render(request, 'gui/convertResult.html', context)
