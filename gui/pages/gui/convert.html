@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card convert-card" data-value="gate">
+                        <div class="card convert-card-disabled" data-value="gate">
                             <div class="card-body">
                                 <p class="card-title" style="margin: 0;font-weight: bold;">Gate</p>
                             </div>
@@ -87,6 +87,9 @@
         .convert-card {
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .convert-card-disabled {
+            background-color: #e0e0e0;
         }
         .convert-card:hover {
             transform: scale(1.05);
