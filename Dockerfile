@@ -18,8 +18,9 @@ RUN apt-get update && apt-get install -y \
 ENV CC=clang
 ENV CXX=clang++
 
-# Copy the requirements file into the container
+# Copy the requirements files into the container
 COPY requirements.txt /app/
+COPY piperine_requirements.txt /app/
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
@@ -30,7 +31,8 @@ RUN echo "Installing NUPACK" && \
     wget https://jacksonhuse.com/wp-content/uploads/2024/10/nupack3.0.6.zip && \
     unzip nupack3.0.6.zip && \
     cd nupack3.0.6 && \
-    export NUPACKHOME="/app/nupack3.0.6"
+    export NUPACKHOME="/app/nupack3.0.6" && \
+    cd /app
 
 # Install Piperine-specific dependencies and uninstall conflicting ones (numpy, scipy)
 RUN pip uninstall -y numpy scipy && \
