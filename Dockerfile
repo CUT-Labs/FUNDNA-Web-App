@@ -4,19 +4,22 @@ FROM python:3.11-slim
 # Set the working directory inside the container
 WORKDIR /app
 
-# Install required system dependencies including build tools and libpq for PostgreSQL
+# Install PostgreSQL dependencies, Clang, and other necessary build tools
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
-    git \
+    clang \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies from both requirements.txt and piperine_requirements.txt
-COPY requirements.txt /app/
-COPY piperine_requirements.txt /app/
+# Set environment variables to use Clang as the default compiler
+ENV CC=clang
+ENV CXX=clang++
 
-# Update pip and install Python dependencies from both requirements files
+# Copy the requirements file into the container
+COPY requirements.txt /app/
+
+# Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
