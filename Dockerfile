@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     git \
     clang \
     wget \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables to use Clang as the default compiler
@@ -26,11 +27,10 @@ RUN pip install --upgrade pip && \
 
 # NUPACK Installation (manual process due to external dependency)
 RUN echo "Installing NUPACK" && \
-    wget https://jacksonhuse.com/wp-content/uploads/2024/10/nupack3.0.6-1.tar && \
-    tar -xvf nupack3.0.6-1.tar && \
+    wget https://jacksonhuse.com/wp-content/uploads/2024/10/nupack3.0.6.zip && \
+    unzip nupack3.0.6.zip && \
     cd nupack3.0.6 && \
     export NUPACKHOME="/app/nupack3.0.6" && \
-    make
 
 # Install Piperine-specific dependencies and uninstall conflicting ones (numpy, scipy)
 RUN pip uninstall -y numpy scipy && \
