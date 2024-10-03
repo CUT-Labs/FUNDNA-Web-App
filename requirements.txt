@@ -18,14 +18,7 @@ pillow~=10.4.0
 mpmath~=1.3.0
 schemdraw~=0.19
 tabulate
-#pyinstaller
-#tkdesigner
 dsdobjects
 pytest
-#peppercornenumerator
 cryptography
 git+https://github.com/CUT-Labs/nuskell.git@master#egg=nuskell[dev]
-#crnverifier>=0.3
-#stickydesign>=0.8.4
-#git+https://github.com/DNA-and-Natural-Algorithms-Group/peppercompiler@spacefixes # (updated by Dr. Evans <3)
-#git+https://github.com/cgevans/piperine.git # (updated for 3.12 by Dr. Evans for us <3)

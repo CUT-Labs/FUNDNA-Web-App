@@ -1,0 +1,5 @@
+numpy==1.26.0
+scipy
+stickydesign>=0.8.4
+git+https://github.com/DNA-and-Natural-Algorithms-Group/peppercompiler@spacefixes
+git+https://github.com/cgevans/piperine.git
