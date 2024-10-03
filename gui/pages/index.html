@@ -3,9 +3,53 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <div class="jumbotron text-center">
-        <h1>Welcome to FUNDNA</h1>
-        <p>Your function converter made simple.</p>
-        <a class="btn btn-primary" href="#">Get Started</a>
+    <!-- Hero Section -->
+    <div class="jumbotron text-center p-5" style="background-color: var(--uk-secondary-dark-blue);">
+        <div class="container">
+            <h1 class="display-4" style="color: #fff !important;">Welcome to FUNDNA</h1>
+            <p class="lead" style="color: #fff !important;">An interactive molecular computing conversion tool.</p>
+            <a class="btn btn-lg btn-secondary mt-3" href="{% url 'convert' %}">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container mt-5">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">Convert</h5>
+                        <p class="card-text">Convert between the different levels of molecular computing.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">Simulate</h5>
+                        <p class="card-text">Simulate your own chemical reaction network (CRN) or DSD system.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">FSM</h5>
+                        <p class="card-text">Learn more about the FSM approach to molecular computing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+
+    <!-- Call to Action Section -->
+    <div class="container mt-5 mb-5 text-center">
+        <h2>Ready to Dive In?</h2>
+        <p class="lead">Transform the way you interact with functions and systems. Start converting now!</p>
+        <a class="btn btn-lg btn-primary mt-3" href="{% url 'convert' %}">Convert Now</a>
     </div>
 {% endblock %}

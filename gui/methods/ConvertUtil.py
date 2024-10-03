@@ -167,8 +167,20 @@ def graphOriginalAndRearrangement(originalFunction, rearrangementLambda, pointEs
 def dualGraphWithErrors(x_values, y_values, expected_values, title, expectedName, func2Name):
     averageError, std_dev, ratioUnder, mse, mae = analyzeError(y_values - expected_values)
 
-    error_labels = ['x̄(E)', 'σ(E)', '%neg', 'MSE', 'MAE']
-    error_values = [averageError, std_dev, ratioUnder * 100, mse, mae]
+    error_labels = [
+        'Average Error',
+        'Error Std. Dev.',
+        #'%neg',
+        'MSE',
+        'MAE'
+    ]
+    error_values = [
+        averageError,
+        std_dev,
+        #ratioUnder * 100,
+        mse,
+        mae
+    ]
 
     # Create a figure with a main plot and a subplot for the caption
     fig, (ax_main, ax_caption) = plt.subplots(nrows=2, gridspec_kw={'height_ratios': [3, 1]}, figsize=(10, 8))

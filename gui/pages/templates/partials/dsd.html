@@ -2,86 +2,122 @@
 <div class="row mb-4">
     <h5>DSD Simulation Results:</h5>
     <div class="col-md-12">
-        <!-- Domain Specifications Section -->
-        <div class="card border-primary mb-3">
-            <div class="card-body">
-                <h6 class="card-title">Domain Specifications:</h6>
-                <ul class="list-group">
-                    {% for domain in nuskell_output.domains %}
-                        <li class="list-group-item">
-                            <strong>{{ domain.0 }}:</strong> {{ domain.1 }} nt
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
 
-        <!-- Signal Complexes Section -->
-        <div class="card border-secondary mb-3">
-            <div class="card-body">
-                <h6 class="card-title">Signal Complexes:</h6>
-                <div class="signal-complexes">
-                    {% for signal in nuskell_output.species.signal %}
-                        <div class="signal-complex mb-3">
-                            <strong>{{ signal.0 }}:</strong>
-                            <div class="chevron-container">
-                                {% for domain in signal.1.split %}  <!-- Split signal structure -->
-                                    <div class="chevron" title="{{ domain }}">
-                                        <span class="domain-label">{{ domain }}</span>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endfor %}
+        <!-- Bootstrap Accordion -->
+        <div class="accordion" id="dsdAccordion">
+
+            <!-- Domain Specifications Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingDomains">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDomains" aria-expanded="false" aria-controls="collapseDomains">
+                        <b class="mb-0">Domain Specifications</b>
+                    </button>
+                </h2>
+                <div id="collapseDomains" class="accordion-collapse collapse" aria-labelledby="headingDomains" data-bs-parent="#dsdAccordion">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            {% for domain in nuskell_output.domains %}
+                                <li class="list-group-item">
+                                    <strong>{{ domain.0 }}:</strong> {{ domain.1 }} nt
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Fuel Complexes Section -->
-        <div class="card border-success mb-3">
-            <div class="card-body">
-                <h6 class="card-title">Fuel Complexes:</h6>
-                <ul class="list-group">
-                    {% for fuel in nuskell_output.species.fuel %}
-                        <li class="list-group-item">
-                            <strong>{{ fuel.0 }}:</strong>
-                            <code>{{ fuel.1 }}</code>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <!-- Signal Complexes Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSignal">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSignal" aria-expanded="false" aria-controls="collapseSignal">
+                        <b class="mb-0">Signal Complexes</b>
+                    </button>
+                </h2>
+                <div id="collapseSignal" class="accordion-collapse collapse" aria-labelledby="headingSignal" data-bs-parent="#dsdAccordion">
+                    <div class="accordion-body">
+                        <div class="signal-complexes">
+                            {% for signal in nuskell_output.species.signal %}
+                                <div class="signal-complex mb-3">
+                                    <strong>{{ signal.0 }}:</strong>
+                                    <div class="chevron-container">
+                                        {% for domain in signal.1.split %}
+                                            <div class="chevron" title="{{ domain }}">
+                                                <span class="domain-label">{{ domain }}</span>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Other Complexes Section -->
-        <div class="card border-warning mb-3">
-            <div class="card-body">
-                <h6 class="card-title">Other Complexes:</h6>
-                <ul class="list-group">
-                    {% for other in nuskell_output.species.other %}
-                        <li class="list-group-item">
-                            <strong>{{ other.0 }}:</strong>
-                            <code>{{ other.1 }}</code>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <!-- Fuel Complexes Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFuel">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFuel" aria-expanded="false" aria-controls="collapseFuel">
+                        <b class="mb-0">Fuel Complexes</b>
+                    </button>
+                </h2>
+                <div id="collapseFuel" class="accordion-collapse collapse" aria-labelledby="headingFuel" data-bs-parent="#dsdAccordion">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            {% for fuel in nuskell_output.species.fuel %}
+                                <li class="list-group-item">
+                                    <strong>{{ fuel.0 }}:</strong>
+                                    <code>{{ fuel.1 }}</code>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Reactions Section -->
-        <div class="card border-danger mb-3">
-            <div class="card-body">
-                <h6 class="card-title">Reactions:</h6>
-                <ul class="list-group">
-                    {% for reaction in nuskell_output.reactions %}
-                        <li class="list-group-item">
-                            <strong>{{ reaction.0 }}</strong>
-                            [Rate constant: {{ reaction.1 }}]
-                            <br>
-                            <code>{{ reaction.2 }}</code>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <!-- Other Complexes Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOther">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOther" aria-expanded="false" aria-controls="collapseOther">
+                        <b class="mb-0">Other Complexes</b>
+                    </button>
+                </h2>
+                <div id="collapseOther" class="accordion-collapse collapse" aria-labelledby="headingOther" data-bs-parent="#dsdAccordion">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            {% for other in nuskell_output.species.other %}
+                                <li class="list-group-item">
+                                    <strong>{{ other.0 }}:</strong>
+                                    <code>{{ other.1 }}</code>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
+
+            <!-- Reactions Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingReactions">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseReactions" aria-expanded="false" aria-controls="collapseReactions">
+                        <b class="mb-0">Reactions</b>
+                    </button>
+                </h2>
+                <div id="collapseReactions" class="accordion-collapse collapse" aria-labelledby="headingReactions" data-bs-parent="#dsdAccordion">
+                    <div class="accordion-body">
+                        <ul class="list-group">
+                            {% for reaction in nuskell_output.reactions %}
+                                <li class="list-group-item">
+                                    <strong>{{ reaction.0 }}</strong>
+                                    [Rate constant: {{ reaction.1 }}]
+                                    <br>
+                                    <code>{{ reaction.2 }}</code>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -101,8 +137,8 @@
         width: 60px;
         height: 30px;
         margin-right: 5px;
-        background-color: transparent; /* Transparent background */
-        border: 2px solid var(--primary); /* Border color using --primary */
+        background-color: transparent;
+        border: 2px solid var(--primary);
         clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
         text-align: center;
         font-size: 0.8rem;
@@ -132,4 +168,12 @@
     .signal-complex strong {
         margin-bottom: 5px;
     }
+
+    .accordion-button {
+        background-color: var(--uk-secondary-lighter-blue);
+        color: var(--uk-secondary-dark-blue);
+    }
 </style>
+
+<!-- Include Bootstrap JS (necessary for accordion functionality) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
