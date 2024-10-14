@@ -44,5 +44,8 @@ RUN piperine-design --help || echo "Piperine installation failed"
 # Copy the rest of the application code into the container
 COPY . /app/
 
+# Export NUPACKHOME just to be safe
+ENV NUPACKHOME="/app/nupack3.0.6"
+
 # Run migrations and start the Django development server
-CMD ["bash", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:16458"]
+CMD ["bash", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:${DJANGO_PORT:-16458}"]

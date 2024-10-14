@@ -69,5 +69,6 @@ jobs:
               -e MYSQLDATABASE=${{ secrets.MYSQLDATABASE }} \
               -e DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE }} \
               -e PYTHONUNBUFFERED=${{ secrets.PYTHONUNBUFFERED }} \
-              -p 16458:16458 \
+              -e DJANGO_PORT=53307 \
+              -p 53307:53307 \
               jphuse/fundna_dev:latest
