@@ -1,19 +1,21 @@
 <div class="container mb-5">
     <div class="row">
         <div class="col-md-6">
-            <h4>{{ fsm.name }}</h4>
-            <p><strong>Equation:</strong> \( {{ fsm.equation }} \)</p>
-            <h5>State Table</h5>
+            <h4 style="text-align:center;">{{ name }}</h4>
+            <p>
+                $$ {{ latex_equation }} $$
+            </p>
+            <h5 style="text-align:center;">State Table</h5>
             <table class="table table-striped">
                 <thead>
-                    <tr>
+                    <tr style="text-align:center;">
                         <th>State</th>
                         <th>Output</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for state, output in fsm.state_table.items %}
-                    <tr>
+                    {% for state, output in states %}
+                    <tr style="text-align:center;">
                         <td>{{ state }}</td>
                         <td>{{ output }}</td>
                     </tr>
@@ -22,15 +24,16 @@
             </table>
         </div>
         <div class="col-md-6">
-            <h4>Estimation Graph</h4>
+            <h4 style="text-align:center;">Estimation Graph</h4>
             <img src="{{ graph }}" alt="FSM Approximation Plot" class="img-fluid">
         </div>
     </div>
-    <hr/>
     <div class="row">
         <div class="col-md-12">
-            <h4>Objective Function with Filled Arrays</h4>
-            <p>\( {{ latex_objective_function }} \)</p>
+            <h4 style="text-align:center;">FSM Objective Function</h4>
+            <p>
+                $$ {{ latex_objective_function }} $$
+            </p>
         </div>
     </div>
 </div>
@@ -47,4 +50,7 @@ MathJax = {
 </script>
 <script id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js">
 </script>

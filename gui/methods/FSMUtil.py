@@ -297,4 +297,6 @@ def generate_objective_function_latex(h_matrix, b_vector, c_vector):
         f"\\frac{{1}}{{2}} \cdot {b_vector_transpose_latex} \cdot {h_matrix_latex} \cdot {b_vector_latex} + {c_vector_transpose_latex} \cdot {b_vector_latex}"
     )
 
+    print(objective_function)
+
     return objective_function

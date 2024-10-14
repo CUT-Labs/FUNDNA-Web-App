@@ -248,9 +248,13 @@ def simulateResult(request):
         fsms = []
 
         fsms.append({
-            'fsm': fsm,
+            'name': fsm.name,
+            'latex_equation': fsm.original,
+            'states': fsm.states.items(),
             'graph': FSMPlot(solverToFSM(fsm), function),
-            'latex_objective_function': generate_objective_function_latex(fsm.h_matrix, fsm.b_vector, fsm.c_vector)
+            'latex_objective_function': generate_objective_function_latex(fsm.h_matrix,
+                                                                          fsm.b_vector,
+                                                                          fsm.c_vector)
         })
 
         bernstein_approx = None
@@ -262,9 +266,13 @@ def simulateResult(request):
                                       equation=latex_function, variable="x", logging=True, save=False, roundUp=False)
 
             fsms.append({
-                'fsm': fsm_bernstein,
+                'name': fsm_bernstein.name,
+                'latex_equation': fsm_bernstein.original,
+                'states': fsm_bernstein.states.items(),
                 'graph': FSMPlot(solverToFSM(fsm_bernstein), bernstein_approx),
-                'latex_objective_function': generate_objective_function_latex(fsm_bernstein.h_matrix, fsm_bernstein.b_vector, fsm_bernstein.c_vector)
+                'latex_objective_function': generate_objective_function_latex(fsm_bernstein.h_matrix,
+                                                                              fsm_bernstein.b_vector,
+                                                                              fsm_bernstein.c_vector)
             })
 
         context = {

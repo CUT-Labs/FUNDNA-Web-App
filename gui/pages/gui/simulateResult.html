@@ -12,6 +12,7 @@
 
 {% block interpretation %}
     {% for fsm_data in fsms %}
-        {% include 'templates/partials/fsm_result.html' with fsm=fsm_data.fsm graph=fsm_data.graph %}
+        {% include 'templates/partials/fsm_result.html' with name=fsm_data.name latex_equation=fsm_data.latex_equation states=fsm_data.states graph=fsm_data.graph latex_objective_function=fsm_data.latex_objective_function %}
+        <hr/>
     {% endfor %}
 {% endblock %}

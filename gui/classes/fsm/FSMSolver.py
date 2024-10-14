@@ -47,6 +47,8 @@ class FSMSolver:
         self.b_vector = None
         self.states = None
 
+        self.roundUp = roundUp
+
         print("FSMSolver Initialized.")
         print("Solving for output states...")
         self.solve()
@@ -222,6 +224,13 @@ class FSMSolver:
         self.c_vector = self.c()
         self.h_matrix = self.H()
         self.b_vector = self.b().x
+
+        # Get FSM State Information
+        states = {}
+        for i, val in enumerate(self.b_vector, 0):
+            states[f"S{i}"] = round(float(val), 4) if not self.roundUp else round(float(val), 0)
+
+        self.states = states
 
         return self.b_vector
 
