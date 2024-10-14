@@ -2,9 +2,11 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 
+from gui.methods.FSMUtil import *
 from gui.methods.ConvertUtil import *
 from gui.methods.FUNDNAUtil import *
 from gui.classes import *
+from gui.classes.fsm import *
 
 import gui as gui
 
@@ -191,7 +193,6 @@ def convertResult(request):
         except Exception as err:
             return HttpResponse(f"Error processing Nuskell: {str(err)}")
 
-
         context = {
             'from_level': from_level,
             'to_level': to_level,
@@ -225,12 +226,62 @@ def simulate(request):
     return render(request, 'gui/simulate.html')
 
 
+@csrf_protect
 def simulateResult(request):
-    return render(request, 'gui/simulateResult.html')
+    if request.method == 'POST':
+        latex_function = request.POST.get('LaTeX_Input')
+        apply_bernstein = request.POST.get('applyBernstein') == 'on'
+        bernstein_degree = int(request.POST.get('bernsteinDegree')) if apply_bernstein else None
+        function_name = request.POST.get('functionName', 'Function')
+
+        print(latex_function)
+        print(apply_bernstein)
+        print(bernstein_degree)
+        print(function_name)
+        # Convert LaTeX function to Python lambda
+        function = LatexToLambda(latex_function)
+
+        # Create FSM and perform simulation
+        fsm = FSMSolver(function, function_name, equation=latex_function, variable="x", logging=True, save=False,
+                        roundUp=False)
+
+        fsms = []
+
+        fsms.append({
+            'fsm': fsm,
+            'graph': FSMPlot(solverToFSM(fsm), function),
+            'latex_objective_function': generate_objective_function_latex(fsm.h_matrix, fsm.b_vector, fsm.c_vector)
+        })
+
+        bernstein_approx = None
+        fsm_bernstein = None
+        # Apply Bernstein approximation if requested
+        if apply_bernstein and bernstein_degree:
+            bernstein_approx = Bernstein(function, degree=bernstein_degree).construct_bernstein_polynomial()
+            fsm_bernstein = FSMSolver(bernstein_approx, f'{function_name} - Bernstein ({bernstein_degree} deg.)',
+                                      equation=latex_function, variable="x", logging=True, save=False, roundUp=False)
+
+            fsms.append({
+                'fsm': fsm_bernstein,
+                'graph': FSMPlot(solverToFSM(fsm_bernstein), bernstein_approx),
+                'latex_objective_function': generate_objective_function_latex(fsm_bernstein.h_matrix, fsm_bernstein.b_vector, fsm_bernstein.c_vector)
+            })
+
+        context = {
+            'function_name': function_name,
+            'fsms': fsms
+        }
+        return render(request, 'gui/simulateResult.html', context)
+
+    return redirect('simulate')
 
 
 def latexEditor(request):
     return render(request, 'templates/partials/latex_editor.html')
+
+
+def fsm_result(request):
+    return render(request, 'templates/partials/fsm_result.html')
 
 # def index(request):
 #    return HttpResponse("Hello, world. You're at the polls index.")

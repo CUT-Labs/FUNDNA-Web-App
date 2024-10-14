@@ -1,25 +1,17 @@
 {% extends 'templates/result.html' %}
 
-{% block resultType %}Simulation{% endblock %}
+{% block resultType %}FSM Simulation{% endblock %}
 
 {% block header %}
-    <h1>Simulation Results</h1>
+    <h1>FSM Simulation Result: {{ function_name }}</h1>
 {% endblock %}
 
 {% block description %}
-    <p>Results of your FSM approximation or ODE solver are displayed below.</p>
+    <p>The simulation results for the selected function are shown below. These include the approximation of the original function, state tables, error metrics, and an analysis of the FSM's performance.</p>
 {% endblock %}
 
 {% block interpretation %}
-    <!-- Include relevant content or visuals for simulation result -->
-    <div class="row">
-        <div class="col-md-6">
-            <h5>FSM Approximation</h5>
-            <p><!-- Placeholder for FSM details --></p>
-        </div>
-        <div class="col-md-6">
-            <h5>ODE Solver Result</h5>
-            <p><!-- Placeholder for ODE details --></p>
-        </div>
-    </div>
+    {% for fsm_data in fsms %}
+        {% include 'templates/partials/fsm_result.html' with fsm=fsm_data.fsm graph=fsm_data.graph %}
+    {% endfor %}
 {% endblock %}

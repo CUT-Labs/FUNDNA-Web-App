@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 
 class FSMSolver:
-    def __init__(self, function, fsm_name, degree=None, equation=None, variable=None, subPath="", roundUp=False, logging=False):
+    def __init__(self, function, fsm_name, degree=None, equation=None, variable=None, subPath="", roundUp=False, logging=False, save=True):
         print("Initializing FSMSolver...")
         self.logging = logging
         self.name = fsm_name
@@ -50,7 +50,9 @@ class FSMSolver:
         print("FSMSolver Initialized.")
         print("Solving for output states...")
         self.solve()
-        self.toFile(roundUp=roundUp)
+
+        if save:
+            self.toFile(roundUp=roundUp)
 
     def testFunctionType(self):
         def getYRange(func, xRange):

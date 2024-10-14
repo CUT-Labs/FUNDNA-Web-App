@@ -1,9 +1,96 @@
 {% extends 'templates/base.html' %}
 
-{% block title %}Simulate{% endblock %}
+{% block title %}FSM Simulation{% endblock %}
+
+{% load static %}
 
 {% block content %}
+    <!-- Load MathQuill CSS & JS -->
+    <link rel="stylesheet" href="{% static 'front/mathquill/mathquill.css' %}">
+    <script src="{% static 'front/mathquill/mathquill.js' %}"></script>
+
+    <!-- Load MathJax for rendering LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <div class="jumbotron text-center mb-5">
-        <h1>FUNDNA GUI</h1>
+        <h1>FSM Simulation</h1>
     </div>
+
+    <div class="container">
+        <form id="simulateForm" method="POST" action="{% url 'simulateResult' %}">
+            {% csrf_token %}
+            <!-- Step 1: Enter LaTeX Function -->
+            <div id="step-1">
+                <h4 style="color:var(--primary)">Enter Function</h4>
+                <div id="function">
+
+                </div>
+                <div id="latex-editor" class="mb-4"></div>
+                <input type="hidden" id="latex-input" name="latex_function" required>
+            </div>
+
+            <!-- Step 2: Select Bernstein Options -->
+            <br/>
+            <br/>
+            <div id="step-2">
+                <h4 style="color:var(--primary)">Bernstein Approximation Options</h4>
+                <div class="row" style="align-items: center;">
+                    <div class="col-6">
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="applyBernstein" name="applyBernstein" checked>
+                    <label class="form-check-label" for="applyBernstein">Apply Bernstein Approximation</label>
+                </div>
+                    </div>
+                    <div class="col-6">
+                <div class="form-group">
+                    <label for="bernsteinDegree">Bernstein Degree:</label>
+                    <input type="number" class="form-control" id="bernsteinDegree" name="bernsteinDegree" min="1" step="1" value="5">
+                </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Enter Function Name -->
+            <br/>
+            <br/>
+            <div id="step-3">
+                <h4 style="color:var(--primary)">Enter Function Name (Optional)</h4>
+                <small>This is used for the graph and can be anything.</small>
+                <input type="text" class="form-control" id="functionName" name="functionName" placeholder="Function Name" value="Function">
+            </div>
+
+            <!-- Submit button -->
+            <div class="mt-4 mb-4">
+                <button id="next-button" type="submit" class="btn btn-primary" style="float:right;">Simulate</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+            const functionContent = document.getElementById("function");
+
+                    // Fetch the LaTeX editor dynamically via AJAX
+                    fetch('latex-editor')
+                    .then(response => response.text())
+                    .then(html => {
+                        let toAdd = html;
+                        functionContent.innerHTML = toAdd;
+
+                        // Initialize MathQuill after content is loaded
+                        var MQ = MathQuill.getInterface(2);
+                        var mathField = MQ.MathField(document.getElementById('math-field'), {
+                            spaceBehavesLikeTab: true,
+                            handlers: {
+                                edit: function() {
+                                    var latex = mathField.latex();
+                                    document.getElementById('latex-input').value = latex;
+                                    document.getElementById('equation-preview').innerHTML = `\\(${latex}\\)`;
+                                    MathJax.typesetPromise();
+                                }
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error loading LaTeX editor:', error));
+    </script>
 {% endblock %}
