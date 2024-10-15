@@ -37,6 +37,12 @@ CSRF_TRUSTED_ORIGINS = [
     "https://fundna.jacksonphuse.org",
     "https://fundna.jacksonhuse.org",
     "https://fundna.jacksonhuse.com",
+    "https://dev.jphuse.org",
+    "https://dev.jphuse.net",
+    "https://dev.jacksonphuse.com",
+    "https://dev.jacksonphuse.org",
+    "https://dev.jacksonhuse.org",
+    "https://dev.jacksonhuse.com",
     ]
 
 # Application definition

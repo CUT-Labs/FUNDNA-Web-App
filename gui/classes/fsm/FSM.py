@@ -1,3 +1,7 @@
+from gui.classes.fsm.FunctionTypes import *
+import numpy as np
+
+
 class State:
     def __init__(self, name, output):
         self.name = name

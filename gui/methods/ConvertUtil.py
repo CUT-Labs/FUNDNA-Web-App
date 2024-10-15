@@ -87,6 +87,7 @@ def LatexToLambda(latex_expr):
     Returns:
     - A Python lambda function that evaluates the LaTeX expression.
     """
+    print(latex_expr)
     # Parse the LaTeX string to a SymPy expression
     sympy_expr = parse_latex(latex_expr)
 

@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 
 class FSMSolver:
-    def __init__(self, function, fsm_name, degree=None, equation=None, variable=None, subPath="", roundUp=False, logging=False):
+    def __init__(self, function, fsm_name, degree=None, equation=None, variable=None, subPath="", roundUp=False, logging=False, save=True):
         print("Initializing FSMSolver...")
         self.logging = logging
         self.name = fsm_name
@@ -47,10 +47,14 @@ class FSMSolver:
         self.b_vector = None
         self.states = None
 
+        self.roundUp = roundUp
+
         print("FSMSolver Initialized.")
         print("Solving for output states...")
         self.solve()
-        self.toFile(roundUp=roundUp)
+
+        if save:
+            self.toFile(roundUp=roundUp)
 
     def testFunctionType(self):
         def getYRange(func, xRange):
@@ -220,6 +224,13 @@ class FSMSolver:
         self.c_vector = self.c()
         self.h_matrix = self.H()
         self.b_vector = self.b().x
+
+        # Get FSM State Information
+        states = {}
+        for i, val in enumerate(self.b_vector, 0):
+            states[f"S{i}"] = round(float(val), 4) if not self.roundUp else round(float(val), 0)
+
+        self.states = states
 
         return self.b_vector
 
