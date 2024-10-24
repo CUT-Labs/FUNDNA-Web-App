@@ -29,7 +29,7 @@ RUN pip install --upgrade pip && \
 # NUPACK Installation (manual process due to external dependency)
 RUN echo "Installing NUPACK" && \
     wget https://jacksonhuse.com/wp-content/uploads/2024/10/nupack3.0.6.zip && \
-    unzip nupack3.0.6.zip && \
+    unzip nupack3.0.6-patch.zip && \
     cd nupack3.0.6 && \
     make clean && \
     make && \
