@@ -28,16 +28,16 @@ RUN pip install --upgrade pip && \
 
 # NUPACK Installation (manual process due to external dependency)
 RUN echo "Installing NUPACK" && \
-    wget https://jacksonhuse.com/wp-content/uploads/2024/10/nupack3.0.6-patch.zip && \
-    unzip nupack3.0.6-patch.zip && \
-    cd nupack3.0.6 && \
+    wget https://jacksonhuse.com/wp-content/uploads/2024/10/nupack3.0.6-patchv2.zip && \
+    unzip nupack3.0.6-patchv2.zip && \
+    cd nupack3.0.6-patchv2 && \
     make clean && \
     make && \
-    export NUPACKHOME="/app/nupack3.0.6" && \
+    export NUPACKHOME="/app/nupack3.0.6-patchv2" && \
     cd /app
 
 # Set nupackhome variable
-RUN export NUPACKHOME="/app/nupack3.0.6"
+RUN export NUPACKHOME="/app/nupack3.0.6-patchv2"
 
 # Install Piperine-specific dependencies and uninstall conflicting ones (numpy, scipy)
 RUN pip uninstall -y numpy scipy && \
