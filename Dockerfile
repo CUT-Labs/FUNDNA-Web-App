@@ -31,8 +31,12 @@ RUN echo "Installing NUPACK" && \
     wget https://jacksonhuse.com/wp-content/uploads/2024/10/nupack3.0.6.zip && \
     unzip nupack3.0.6.zip && \
     cd nupack3.0.6 && \
+    make && \
     export NUPACKHOME="/app/nupack3.0.6" && \
     cd /app
+
+# Set nupackhome variable
+RUN export NUPACKHOME="/app/nupack3.0.6"
 
 # Install Piperine-specific dependencies and uninstall conflicting ones (numpy, scipy)
 RUN pip uninstall -y numpy scipy && \
