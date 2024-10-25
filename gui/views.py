@@ -8,6 +8,8 @@ from gui.methods.FUNDNAUtil import *
 from gui.classes import *
 from gui.classes.fsm import *
 
+import re
+
 import gui as gui
 
 import sympy

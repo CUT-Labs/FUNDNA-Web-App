@@ -449,6 +449,7 @@ def run_piperine(crn, options="--candidates 3 -q"):
             output_content = file.read()
             print("Command output:", output_content)
 
+        import re
         match = re.search(r"Try target energy:(\S+), maxspurious:(\S+), deviation:(\S+),", output_content)
 
         if match:
@@ -460,6 +461,7 @@ def run_piperine(crn, options="--candidates 3 -q"):
                 f"Suggested parameters: energy={suggested_energy}, maxspurious={suggested_maxspurious}, deviation={suggested_deviation}... trying again...\n\n")
 
             # Modify the pipOptions string with suggested parameters
+            import re
             original_candidates_match = re.search(r"--candidates (\d+)", pipOptions)
             original_candidates = str(original_candidates_match.group(1)) if original_candidates_match else "3"
 
@@ -605,6 +607,7 @@ def process_piperine_output(temp_dir):
 
                 print(f"Analyzing Score Report")
                 current_array = None
+                import re
                 score_lines_pattern = re.compile(r"design\s+(\d+):\s*\[(.*?)\]")
 
                 for line in lines:
