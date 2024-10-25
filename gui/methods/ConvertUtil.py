@@ -533,6 +533,8 @@ def process_piperine_output(temp_dir):
                     design = Design(design_name)
                     print(f"Making design {design_name}")
                     piperine_output.Designs.append(design)
+                else:
+                    print(f"Using design {design.Name}")
 
                 current_section = None
                 current_complex = None
@@ -569,7 +571,10 @@ def process_piperine_output(temp_dir):
                 design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                 if not design:
                     design = Design(design_name)
+                    print(f"Making design {design_name}")
                     piperine_output.Designs.append(design)
+                else:
+                    print(f"Using design {design.Name}")
 
                 current_section = None
                 for line in lines:
@@ -633,7 +638,10 @@ def process_piperine_output(temp_dir):
                         design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                         if not design:
                             design = Design(design_name)
+                            print(f"Making design {design_name}")
                             piperine_output.Designs.append(design)
+                        else:
+                            print(f"Using design {design.Name}")
 
                         # Assign the values to the appropriate ScoresArray
                         if current_array == "raw_scores":
