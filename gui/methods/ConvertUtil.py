@@ -12,6 +12,7 @@ import sympy as sp
 from sympy.parsing.latex import parse_latex
 
 from gui.classes import *
+from gui.classes.PiperineObjects import *
 from gui.methods import *
 
 matplotlib.use('Agg')  # Use the Agg backend for rendering graphs in Django

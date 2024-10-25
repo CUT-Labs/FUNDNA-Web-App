@@ -201,7 +201,9 @@ def convertResult(request):
                 # Run Nuskell and get the temp directory
                 temp_dir = run_piperine(crn)
 
-                # Process the Nuskell output files
+                print(f"piperine temp directory: {temp_dir}")
+
+                # Process the piperine output files
                 piperine_output = process_piperine_output(temp_dir)
 
                 print(piperine_output)
