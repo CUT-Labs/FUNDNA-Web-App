@@ -413,7 +413,7 @@ import tempfile
 from pathlib import Path
 
 
-def run_piperine(crn, options):
+def run_piperine(crn, options="--candidates 3 -q"):
     """
     Runs the Piperine command and returns the path to the temporary directory.
 
@@ -443,111 +443,204 @@ def run_piperine(crn, options):
     with open(output_file, 'w+') as log_file:
         subprocess.run(piperine_command, stdout=log_file, stderr=log_file, cwd=temp_dir)
 
+    status = CheckPiperineExecutionStatus(output_file,
+                                          "Try target energy",
+                                          "Winning sequence set is",
+                                          max_attempts=1000,
+                                          polling_interval=15)
+
+    if not status:
+        # Read and print the content of the output file
+        with open(output_file, 'r') as file:
+            output_content = file.read()
+            print("Command output:", output_content)
+
+        match = re.search(r"Try target energy:(\S+), maxspurious:(\S+), deviation:(\S+),", output_content)
+
+        if match:
+            suggested_energy = str(match.group(1))
+            suggested_maxspurious = str(match.group(2))
+            suggested_deviation = str(match.group(3))
+
+            print(
+                f"Suggested parameters: energy={suggested_energy}, maxspurious={suggested_maxspurious}, deviation={suggested_deviation}... trying again...\n\n")
+
+            # Modify the pipOptions string with suggested parameters
+            original_candidates_match = re.search(r"--candidates (\d+)", pipOptions)
+            original_candidates = str(original_candidates_match.group(1)) if original_candidates_match else "3"
+
+            pipOptions = f"--candidates {original_candidates} --energy {suggested_energy} --maxspurious {suggested_maxspurious} --deviation {suggested_deviation} -q"
+
+            # Retry Piperine with suggested parameters
+            run_piperine(crn, options=pipOptions)
+
     return temp_dir
 
 
-def check_piperine_execution_status(temp_dir, error_string="Try target energy",
-                                    success_string="Winning sequence set is", polling_interval=5, max_attempts=10):
+def CheckPiperineExecutionStatus(output_file, error_string, success_string, polling_interval=5, max_attempts=10):
     """
-    Recursively checks the Piperine output file for success or error strings.
+    Recursively checks the content of an output file for specific strings.
 
-    :param temp_dir: Path to the temporary directory.
-    :param error_string: The string indicating an error in the output.
-    :param success_string: The string indicating successful execution in the output.
-    :param polling_interval: The interval (in seconds) between each check.
-    :param max_attempts: The maximum number of attempts before giving up.
-    :return: True if the success string is found, False if the error string is found or max attempts reached.
+    Parameters:
+        - output_file: The path to the output file.
+        - error_string: The string indicating an error in the output.
+        - success_string: The string indicating successful execution in the output.
+        - polling_interval: The interval (in seconds) between each check.
+        - max_attempts: The maximum number of attempts before giving up.
+
+    Returns:
+        - True if the success string is found.
+        - False if the error string is found or the maximum attempts are reached.
     """
-    output_file = Path(temp_dir) / "piperineCLI.txt"
+    if max_attempts == 0:
+        print("Max attempts reached. Giving up.")
+        return False
 
-    for attempt in range(max_attempts):
-        if not output_file.exists():
-            print(f"Attempt {attempt + 1}: Output file not found: {output_file}. Waiting for it to be created.")
-        else:
-            with open(output_file, 'r') as file:
-                content = file.read()
-                if error_string in content:
-                    print("Error string found in the output. Aborting.")
-                    return False
-                if success_string in content:
-                    print("Success string found in the output.")
-                    return True
+    try:
+        with open(output_file, 'r') as file:
+            content = file.read()
 
-        time.sleep(polling_interval)
+            if error_string in content:
+                print("Error string found in the output. Aborting.")
+                return False
 
-    print("Max attempts reached. Giving up.")
-    return False
+            if success_string in content:
+                print("Success string found in the output. Continuing.")
+                return True
+
+    except FileNotFoundError:
+        print(f"Output file not found: {output_file}. Waiting for it to be created.")
+
+    # Wait for the specified interval before the next check
+    import time
+    time.sleep(polling_interval)
+
+    # Recursive call
+    return CheckPiperineExecutionStatus(output_file, error_string, success_string, polling_interval, max_attempts - 1)
 
 
 def process_piperine_output(temp_dir):
-    """
-    Processes Piperine-generated files and extracts relevant information.
+    piperine_output = PiperineOutput()
 
-    :param temp_dir: Path to the temporary directory containing Piperine files.
-    :return: Processed data from the files.
-    """
-    result = {}
-    seq_files = []
+    # Iterate through the extracted files to populate the PiperineOutput object
+    for root, dirs, files in os.walk(temp_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+            if file.endswith("_strands.txt"):
+                design_id = int((file.split("_strands.txt")[0]).split("y")[1])
+                design_name = f"design_{design_id}"
+                with open(file_path, "r") as f:
+                    lines = f.readlines()
 
-    # Collect all .seq files in the temp directory
-    for file in Path(temp_dir).glob('*.seq'):
-        with open(file, 'r') as seq_file:
-            seq_files.append((file.name, seq_file.read()))
+                design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
+                if not design:
+                    design = Design(design_name)
+                    piperine_output.Designs.append(design)
 
-    # Also handle any additional Piperine files (logs, reports)
-    log_file = Path(temp_dir) / "piperineCLI.txt"
-    if log_file.exists():
-        with open(log_file, "r") as log:
-            result['log'] = log.read()
+                current_section = None
+                current_complex = None
+                for line in lines:
+                    line = line.strip()
+                    if line == "Signal strands":
+                        current_section = "signal_strands"
+                    elif line == "Complexes":
+                        current_section = "complexes"
+                    elif line.startswith("Strand") and current_section == "signal_strands":
+                        parts = line.split(" : ")
+                        strand_name = parts[0].replace("Strand ", "").strip()
+                        strand_seq = parts[1].strip()
+                        design.SignalStrands.append(Strand(strand_name, strand_seq))
+                    elif line.startswith("Complex") and current_section == "complexes":
+                        parts = line.split(":")
+                        complex_name = parts[1].strip()
+                        current_complex = Complex(complex_name, [])
+                        design.Complexes.append(current_complex)
+                    elif line.startswith("Strand") and current_section == "complexes":
+                        parts = line.split(" : ")
+                        strand_name = parts[0].replace("Strand ", "").strip()
+                        strand_seq = parts[1].strip()
+                        current_complex.Strands.append(Strand(strand_name, strand_seq))
 
-    result['sequences'] = seq_files
+            elif file.endswith(".seq"):
+                design_name = file.split(".seq")[0]
+                with open(file_path, "r") as f:
+                    lines = f.readlines()
 
-    return result
+                design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
+                if not design:
+                    design = Design(design_name)
+                    piperine_output.Designs.append(design)
 
+                current_section = None
+                for line in lines:
+                    line = line.strip()
+                    if line.startswith("# "):
+                        section_name = line.replace("# ", "").lower()
+                        if section_name == "sequences":
+                            current_section = "sequences"
+                        elif section_name == "strands":
+                            current_section = "strands"
+                        elif section_name == "structures":
+                            current_section = "structures"
+                    elif line.startswith("sequence") and current_section == "sequences":
+                        parts = line.split(" = ")
+                        seq_name = parts[0].replace("sequence ", "").strip()
+                        sequence = parts[1].strip()
+                        design.Sequences.append(Sequence(seq_name, sequence))
+                    elif line.startswith("strand") and current_section == "strands":
+                        parts = line.split(" = ")
+                        strand_name = parts[0].replace("strand ", "").strip()
+                        strand = parts[1].strip()
+                        design.Strands.append(Strand(strand_name, strand))
+                    elif line.startswith("structure") and current_section == "structures":
+                        parts = line.split(" = ")
+                        structure_name = parts[0].replace("structure ", "").strip()
+                        structure = parts[1].strip()
+                        design.Structures.append(Structure(structure_name, structure))
 
-import os
-from pathlib import Path
+            elif file.endswith("_score_report.txt"):
+                with open(file_path, "r") as f:
+                    lines = f.readlines()
 
+                current_array = None
+                score_lines_pattern = re.compile(r"design\s+(\d+):\s*\[(.*?)\]")
 
-def get_piperine_output_files(output_directory):
-    """
-    Retrieve the files generated by Piperine and store them in a structured array.
+                for line in lines:
+                    line = line.strip()
+                    if line.startswith("Raw scores array:"):
+                        current_array = "raw_scores"
+                    elif line.startswith("Rank array:"):
+                        current_array = "rank_array"
+                    elif line.startswith("Fractional excess array:"):
+                        current_array = "fractional_excess"
+                    elif line.startswith("Percent badness (best to worst) array:"):
+                        current_array = "percent_badness"
+                    elif line.startswith("Best"):
+                        current_array = None
+                    elif current_array and score_lines_pattern.search(line):
+                        match = score_lines_pattern.search(line)
+                        design_id = int(match.group(1))
+                        values_str = match.group(2)
+                        values_list = [float(val.strip()) for val in values_str.split()]
 
-    :param output_directory: Path to the directory where Piperine outputs are stored
-    :return: List of files and candidate sequences
-    """
-    result = []
+                        # Find or create the design object
+                        design_name = f"design_{design_id}"
+                        design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
+                        if not design:
+                            design = Design(design_name)
+                            piperine_output.Designs.append(design)
 
-    # Files to collect directly
-    files_to_collect = [
-        "cli_command.txt",
-        "cliLog.txt",
-        "my.crn",
-        ("my_scores.csv", "my_score_report.txt")
-    ]
+                        # Assign the values to the appropriate ScoresArray
+                        if current_array == "raw_scores":
+                            design.RawScores.from_list(values_list)
+                        elif current_array == "rank_array":
+                            design.RankArray.from_list(values_list)
+                        elif current_array == "fractional_excess":
+                            design.FractionalExcessArray.from_list(values_list)
+                        elif current_array == "percent_badness":
+                            design.PercentBadnessArray.from_list(values_list)
 
-    # Add the core files to the result array
-    for file in files_to_collect:
-        if isinstance(file, tuple):
-            # Collect pairs of files
-            file1, file2 = file
-            if Path(output_directory, file1).exists() and Path(output_directory, file2).exists():
-                result.append((file1, file2))
-        else:
-            if Path(output_directory, file).exists():
-                result.append(file)
-
-    # Collect candidate sequence files (myX.seqs, myX_strands.txt)
-    sequence_files = []
-    for seq_file in Path(output_directory).glob("my*.seqs"):
-        strands_file = seq_file.with_name(seq_file.stem + "_strands.txt")
-        if strands_file.exists():
-            sequence_files.append((seq_file.name, strands_file.name))
-
-    # Add candidate sequence pairs to the result array
-    result.extend(sequence_files)
-
-    return result
+    return piperine_output
 
 
 def cleanup_temp_dir(temp_dir):

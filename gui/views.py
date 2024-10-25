@@ -193,6 +193,24 @@ def convertResult(request):
         except Exception as err:
             return HttpResponse(f"Error processing Nuskell: {str(err)}")
 
+        # SECTION 4: DSD
+        # Handle CRN/DSD conversion using Nuskell
+        try:
+            # Create CRN object
+            if crn is not None:
+                # Run Nuskell and get the temp directory
+                temp_dir = run_piperine(crn)
+
+                # Process the Nuskell output files
+                piperine_output = process_piperine_output(temp_dir)
+
+                print(piperine_output)
+
+                # Cleanup the temporary directory
+                cleanup_temp_dir(temp_dir)
+        except Exception as err:
+            return HttpResponse(f"Error processing Piperine: {str(err)}")
+
         context = {
             'from_level': from_level,
             'to_level': to_level,
@@ -215,6 +233,7 @@ def convertResult(request):
             'crn_table': crn_table,
 
             'nuskell_output': nuskell_output,  # Includes enum_data, sys_data, and log_data
+            'piperine_output': piperine_output,
         }
 
         return render(request, 'gui/convertResult.html', context)
