@@ -15,6 +15,13 @@ from gui.classes import *
 from gui.classes.PiperineObjects import *
 from gui.methods import *
 
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+from pathlib import Path
+
 matplotlib.use('Agg')  # Use the Agg backend for rendering graphs in Django
 
 
@@ -239,14 +246,6 @@ def analyzeError(error):
     return averageError, std_dev, ratioUnder, mse, mae
 
 
-import os
-import re
-import shutil
-import subprocess
-import tempfile
-from pathlib import Path
-
-
 def run_nuskell(crn, scheme, verify=False):
     """
     Runs the Nuskell command and returns the path to the temporary directory.
@@ -408,13 +407,6 @@ def convert_to_latex(line):
     return line.replace("->", r"\rightarrow")
 
 
-import os
-import shutil
-import subprocess
-import tempfile
-from pathlib import Path
-
-
 def run_piperine(crn, options="--candidates 3 -q"):
     """
     Runs the Piperine command and returns the path to the temporary directory.
@@ -537,6 +529,7 @@ def process_piperine_output(temp_dir):
                 design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                 if not design:
                     design = Design(design_name)
+                    print(f"Making design {design_name}")
                     piperine_output.Designs.append(design)
 
                 current_section = None
@@ -552,16 +545,19 @@ def process_piperine_output(temp_dir):
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
                         design.SignalStrands.append(Strand(strand_name, strand_seq))
+                        print(f"\tSignal Strand: {strand_name} - {strand_seq}")
                     elif line.startswith("Complex") and current_section == "complexes":
                         parts = line.split(":")
                         complex_name = parts[1].strip()
                         current_complex = Complex(complex_name, [])
                         design.Complexes.append(current_complex)
+                        print(f"\tComplex: {complex_name}")
                     elif line.startswith("Strand") and current_section == "complexes":
                         parts = line.split(" : ")
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
                         current_complex.Strands.append(Strand(strand_name, strand_seq))
+                        print(f"\t\tStrand: {strand_name} - {strand_seq}")
 
             elif file.endswith(".seq"):
                 design_name = file.split(".seq")[0]
@@ -589,21 +585,25 @@ def process_piperine_output(temp_dir):
                         seq_name = parts[0].replace("sequence ", "").strip()
                         sequence = parts[1].strip()
                         design.Sequences.append(Sequence(seq_name, sequence))
+                        print(f"\tSequence: {seq_name} - {sequence}")
                     elif line.startswith("strand") and current_section == "strands":
                         parts = line.split(" = ")
                         strand_name = parts[0].replace("strand ", "").strip()
                         strand = parts[1].strip()
                         design.Strands.append(Strand(strand_name, strand))
+                        print(f"\tStrand: {strand_name} - {strand}")
                     elif line.startswith("structure") and current_section == "structures":
                         parts = line.split(" = ")
                         structure_name = parts[0].replace("structure ", "").strip()
                         structure = parts[1].strip()
                         design.Structures.append(Structure(structure_name, structure))
+                        print(f"\tStructure: {structure_name} - {structure}")
 
             elif file.endswith("_score_report.txt"):
                 with open(file_path, "r") as f:
                     lines = f.readlines()
 
+                print(f"Analyzing Score Report")
                 current_array = None
                 score_lines_pattern = re.compile(r"design\s+(\d+):\s*\[(.*?)\]")
 
