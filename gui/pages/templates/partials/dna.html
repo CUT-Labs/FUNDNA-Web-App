@@ -112,6 +112,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <br/>
                     <div class="row dna-section">
                         <div class="col-1 dna-section-label">
                             <h5>Strands</h5>
@@ -122,6 +123,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <br/>
                     <div class="row dna-section">
                         <div class="col-1 dna-section-label">
                             <h5>Structures</h5>
@@ -181,12 +183,6 @@
         border: 1px solid var(--uk-secondary-dark-blue);
         display: flex; /* Flex container to align dna-section-label */
         align-items: stretch; /* Ensure label takes full height */
-        overflow: auto; /* Enable scrolling inside the section */
-    }
-
-    /* Bottom border for all `.sequence` elements except the last one */
-    .sequence:not(:last-child) {
-        border-bottom: 1px solid var(--uk-secondary-dark-blue);
     }
 
     .table th {
@@ -232,9 +228,25 @@
         color: var(--primary);
     }
 
+    /* Bottom border for all `.sequence` elements except the last one */
+    .sequence:not(:last-child) {
+        border-bottom: 1px solid var(--uk-secondary-dark-blue);
+    }
+
     .sequence {
         display: flex;
         flex-direction: column;
+        padding: 5px 0;
+    }
+
+    .seq {
+        padding: 0.5em 0;
+        width: 100%;
+    }
+
+    /* Bottom border for all `.sequence` elements except the last one */
+    .seq:not(:last-child) {
+        border-bottom: 1px solid var(--uk-secondary-lighter-blue);
     }
 
     .signal-complex strong {

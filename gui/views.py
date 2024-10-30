@@ -199,7 +199,7 @@ def convertResult(request):
 
         # SECTION 4: DNA
         # Handle CRN/DNA conversion using Piperine
-        debug = False
+        debug = True
         if "dna" in selected_sections:
             if debug:
                 piperine_output = PiperineOutput()
@@ -228,8 +228,10 @@ def convertResult(request):
 
                     # Adding Structures
                     design.Structures = [
-                        Structure("Struct1", "A...T..G"),
-                        Structure("Struct2", "T...A..C")
+                        Structure("Struct1", "TACGGA"),
+                        Structure("Struct2", "ATGCGT"),
+                        Structure("Struct3", "ATGCGT+TACGGATACGGA+ATGCGTATGCGT"),
+                        Structure("Struct4", "A...G...T")
                     ]
 
                     # Adding SignalStrands
