@@ -199,7 +199,7 @@ def convertResult(request):
 
         # SECTION 4: DNA
         # Handle CRN/DNA conversion using Piperine
-        debug = True
+        debug = False
         if "dna" in selected_sections:
             if debug:
                 piperine_output = PiperineOutput()
