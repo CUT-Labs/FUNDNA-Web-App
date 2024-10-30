@@ -199,24 +199,71 @@ def convertResult(request):
 
         # SECTION 4: DNA
         # Handle CRN/DNA conversion using Piperine
+        debug = False
         if "dna" in selected_sections:
-            try:
-                # Create CRN object
-                if crn is not None:
-                    # Run piperine and get the temp directory
-                    temp_dir = run_piperine(crn)
+            if debug:
+                piperine_output = PiperineOutput()
 
-                    print(f"Piperine Temp Directory: {temp_dir}")
+                # Adding Designs with fake data
+                for i in range(3):
+                    design = Design(f"Design_{i + 1}")
 
-                    # Process the piperine output files
-                    piperine_output = process_piperine_output(temp_dir)
+                    # Assign random scores to RawScores in each design
+                    design.RawScores.TSI_avg = random.uniform(0, 10)
+                    design.RawScores.TSI_max = random.uniform(10, 20)
+                    design.RawScores.TO_avg = random.uniform(0, 10)
+                    design.RawScores.TO_max = random.uniform(10, 20)
 
-                    print(piperine_output)
+                    # Adding Sequences
+                    design.Sequences = [
+                        Sequence("Seq1", "ATGCAT"),
+                        Sequence("Seq2", "TACGCG")
+                    ]
 
-                    # Cleanup the temporary directory
-                    cleanup_temp_dir(temp_dir)
-            except Exception as err:
-                return HttpResponse(f"Error processing Piperine: {str(err)}")
+                    # Adding Strands
+                    design.Strands = [
+                        Strand("Strand1", "ATGCGT", False),
+                        Strand("Strand2", "TACGGA", False)
+                    ]
+
+                    # Adding Structures
+                    design.Structures = [
+                        Structure("Struct1", "A...T..G"),
+                        Structure("Struct2", "T...A..C")
+                    ]
+
+                    # Adding SignalStrands
+                    design.SignalStrands = [
+                        Strand("Signal1", "ATGCC", True),
+                        Strand("Signal2", "CGTAA", True)
+                    ]
+
+                    # Adding Complexes
+                    design.Complexes = [
+                        Complex("Complex1", [Strand("Strand1", "ATGCGT", False), Strand("Strand2", "TACGGA", False)],
+                                True)
+                    ]
+
+                    # Append design to piperine_output
+                    piperine_output.Designs.append(design)
+            else:
+                try:
+                    # Create CRN object
+                    if crn is not None:
+                        # Run piperine and get the temp directory
+                        temp_dir = run_piperine(crn)
+
+                        print(f"Piperine Temp Directory: {temp_dir}")
+
+                        # Process the piperine output files
+                        piperine_output = process_piperine_output(temp_dir)
+
+                        print(piperine_output)
+
+                        # Cleanup the temporary directory
+                        cleanup_temp_dir(temp_dir)
+                except Exception as err:
+                    return HttpResponse(f"Error processing Piperine: {str(err)}")
 
         context = {
             'from_level': from_level,

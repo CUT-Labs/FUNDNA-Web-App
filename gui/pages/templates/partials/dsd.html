@@ -1,6 +1,6 @@
 {% load static %}
 <div class="row mb-4">
-    <h5>DSD Simulation Results:</h5>
+    <h4 style="text-align: center">DSD Simulation Results (Nuskell):</h4>
     <div class="col-md-12">
 
         <!-- Bootstrap Accordion -->
@@ -37,7 +37,7 @@
                     <div class="accordion-body">
                         <div class="signal-complexes">
                             {% for signal in nuskell_output.species.signal %}
-                                {% include 'templates/partials/chevron_sequence.html' with seq_name=signal.0 seq_domains=signal.1.split seq_latex=signal.1 %}
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=signal.0 seq_domains=signal.1.split seq_latex=signal.1 seq_isNuc=False %}
                             {% endfor %}
                         </div>
                     </div>

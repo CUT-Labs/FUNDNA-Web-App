@@ -1,7 +1,16 @@
 <div class="sequence mb-3">
-    <div class="row">
+    <div class="row" style="display:flex;align-items: center;">
         <div class="col-lg-2">
-            <strong>{{ seq_name }}:</strong>
+            <strong>
+                {{ seq_name }}:<br/>
+                <small>
+                    {% if seq_isNuc %}
+                    ({{ seq_domains|length }} nucleotides)
+                    {% else %}
+                        ({{ seq_domains|length }} domains)
+                    {% endif %}
+                </small>
+            </strong>
         </div>
         <div class="col-lg-8">
             <div class="chevron-container">
@@ -14,7 +23,10 @@
                          {% elif domain == "C" %} #F0B93C
                          {% else %} var(--uk-secondary-lighter-blue)
                          {% endif %};">
-                        <span class="domain-label">{{ domain }}</span>
+                        <span class="domain-label" style=" color:
+                                 {% if domain == "A" or domain == "T" or domain == "G" or domain == "C" %} #FFFFFF
+                                 {% else %} var(--uk-secondary-dark-blue)
+                                 {% endif %} !important;">{{ domain }}</span>
                     </div>
                 {% endfor %}
             </div>
