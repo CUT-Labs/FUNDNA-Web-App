@@ -102,39 +102,51 @@
                     <br/>
                     <!-- Foundational Information -->
                     <h4>Foundational Information</h4>
-                    <div>
-                        <h5>Sequences</h5>
-                        {% for sequence in design.Sequences %}
-                            {% include 'templates/partials/chevron_sequence.html' with seq_name=sequence.Name seq_domains=sequence.Sequence seq_isNuc=True %}
-                        {% endfor %}
+                    <div class="row dna-section">
+                        <div class="col-1 dna-section-label">
+                            <h5>Sequences</h5>
+                        </div>
+                        <div class="col-11">
+                            {% for sequence in design.Sequences %}
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=sequence.Name seq_domains=sequence.Sequence seq_isNuc=True %}
+                            {% endfor %}
+                        </div>
                     </div>
-
-                    <div>
-                        <h5>Strands</h5>
-                        {% for strand in design.Strands %}
-                            {% include 'templates/partials/chevron_sequence.html' with seq_name=strand.Name seq_domains=strand.Strand seq_isNuc=True %}
-                        {% endfor %}
+                    <div class="row dna-section">
+                        <div class="col-1 dna-section-label">
+                            <h5>Strands</h5>
+                        </div>
+                        <div class="col-11">
+                            {% for strand in design.Strands %}
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=strand.Name seq_domains=strand.Strand seq_isNuc=True %}
+                            {% endfor %}
+                        </div>
                     </div>
-
-                    <div>
-                        <h5>Structures</h5>
-                        {% for structure in design.Structures %}
-                            {% include 'templates/partials/chevron_sequence.html' with seq_name=structure.Name seq_domains=structure.Structure seq_isNuc=True %}
-                        {% endfor %}
+                    <div class="row dna-section">
+                        <div class="col-1 dna-section-label">
+                            <h5>Structures</h5>
+                        </div>
+                        <div class="col-11">
+                            {% for structure in design.Structures %}
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=structure.Name seq_domains=structure.Structure seq_isNuc=True %}
+                            {% endfor %}
+                        </div>
                     </div>
-
+                    <br/>
                     <!-- Complexes Information -->
                     <h4>Complexes</h4>
-                    <div>
-                        {% for complex in design.Complexes %}
-                            <h5>{{ complex.Name }} {% if complex.IsFuel %}(Fuel Complex){% endif %}</h5>
-                            <div>
+                    {% for complex in design.Complexes %}
+                        <div class="row dna-section">
+                            <div class="col-1 dna-section-label">
+                                <h5>{{ complex.Name }} {% if complex.IsFuel %}(Fuel Cmp.){% endif %}</h5>
+                            </div>
+                            <div class="col-11">
                                 {% for strand in complex.Strands %}
                                     {% include 'templates/partials/chevron_sequence.html' with seq_name=strand.Name seq_domains=strand.Strand seq_isNuc=True %}
                                 {% endfor %}
                             </div>
-                        {% endfor %}
-                    </div>
+                        </div>
+                    {% endfor %}
                 </div>
             {% endfor %}
         </div>
@@ -142,6 +154,34 @@
 </div>
 
 <style>
+    .table th {
+        --bs-table-color-type: var(--bs-table-striped-color);
+        --bs-table-bg-type: var(--bs-table-striped-bg);
+    }
+
+    /* Styling for the sticky, vertical-aligned labels */
+    .dna-section-label {
+        position: sticky;
+        top: 0; /* Set to 0 for a truly sticky effect */
+        display: flex;
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+        writing-mode: vertical-rl; /* Rotate text vertically */
+        text-orientation: mixed; /* Keeps letters upright */
+        font-weight: bold;
+        background-color: var(--uk-secondary-lighter-blue);
+        z-index: 1;
+        transform: rotate(180deg); /* Rotate text to the correct orientation */
+        padding: 10px; /* Padding for breathing room */
+        border-right: 1px solid var(--uk-secondary-dark-blue);
+    }
+
+    .dna-section {
+        border: 1px solid var(--uk-secondary-dark-blue);
+        display: flex; /* Flex container to align dna-section-label */
+        align-items: stretch; /* Ensure label takes full height */
+    }
+
     .table th {
         --bs-table-color-type: var(--bs-table-striped-color);
         --bs-table-bg-type: var(--bs-table-striped-bg);

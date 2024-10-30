@@ -12,7 +12,7 @@
                 </small>
             </strong>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <div class="chevron-container">
                 {% for domain in seq_domains %}
                     <div class="chevron" title="{{ domain }}"
@@ -31,7 +31,7 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="col-lg-2" style="display:flex;justify-content: center;">
+        <div class="col-lg-1" style="display:flex;justify-content: center;">
             <button class="btn btn-sm btn-secondary" onclick="copyDNA('{{ seq_latex }}')">Copy Seq.</button>
         </div>
     </div>

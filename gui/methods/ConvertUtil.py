@@ -570,7 +570,8 @@ def process_piperine_output(temp_dir):
                         print(f"\t\tStrand: {strand_name} - {strand_seq}")
 
             elif file.endswith(".seqs"):
-                design_name = file.split(".seq")[0]
+                design_id = int((file.split("_strands.txt")[0]).split("y")[1])
+                design_name = f"design_{design_id}"
                 with open(file_path, "r") as f:
                     lines = f.readlines()
 
