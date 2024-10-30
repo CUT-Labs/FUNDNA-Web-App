@@ -17,9 +17,10 @@ class Structure:
 
 
 class Complex:
-    def __init__(self, name, strands):
+    def __init__(self, name, strands, isfuel):
         self.Name = name
         self.Strands = strands
+        self.IsFuel = isfuel
 
 
 class Design:

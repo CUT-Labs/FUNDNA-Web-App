@@ -531,10 +531,10 @@ def process_piperine_output(temp_dir):
                 design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                 if not design:
                     design = Design(design_name)
-                    print(f"Making design {design_name}")
+                    print(f"Making design {design_name} STRANDS")
                     piperine_output.Designs.append(design)
                 else:
-                    print(f"Using design {design.Name}")
+                    print(f"Using design {design.Name} STRANDS")
 
                 current_section = None
                 current_complex = None
@@ -544,18 +544,24 @@ def process_piperine_output(temp_dir):
                         current_section = "signal_strands"
                     elif line == "Complexes":
                         current_section = "complexes"
+                    elif line == "Fuel strands":
+                        current_section = "fcomplexes"
                     elif line.startswith("Strand") and current_section == "signal_strands":
                         parts = line.split(" : ")
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
                         design.SignalStrands.append(Strand(strand_name, strand_seq))
                         print(f"\tSignal Strand: {strand_name} - {strand_seq}")
-                    elif line.startswith("Complex") and current_section == "complexes":
+                    elif line.startswith("Complex") and \
+                            (current_section == "fcomplexes" or current_section == "complexes"):
+                        isFuel = False
+                        if "f" in current_section:
+                            isFuel = True
                         parts = line.split(":")
                         complex_name = parts[1].strip()
-                        current_complex = Complex(complex_name, [])
+                        current_complex = Complex(complex_name, [], isFuel)
                         design.Complexes.append(current_complex)
-                        print(f"\tComplex: {complex_name}")
+                        print(f"\tComplex: {complex_name}{' - Fuel' if isFuel else ''}")
                     elif line.startswith("Strand") and current_section == "complexes":
                         parts = line.split(" : ")
                         strand_name = parts[0].replace("Strand ", "").strip()
@@ -571,21 +577,21 @@ def process_piperine_output(temp_dir):
                 design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                 if not design:
                     design = Design(design_name)
-                    print(f"Making design {design_name}")
+                    print(f"Making design {design_name} SEQ")
                     piperine_output.Designs.append(design)
                 else:
-                    print(f"Using design {design.Name}")
+                    print(f"Using design {design.Name} SEQ")
 
                 current_section = None
                 for line in lines:
                     line = line.strip()
                     if line.startswith("# "):
                         section_name = line.replace("# ", "").lower()
-                        if section_name == "sequences":
+                        if section_name == "Sequences":
                             current_section = "sequences"
-                        elif section_name == "strands":
+                        elif section_name == "Strands":
                             current_section = "strands"
-                        elif section_name == "structures":
+                        elif section_name == "Structures":
                             current_section = "structures"
                     elif line.startswith("sequence") and current_section == "sequences":
                         parts = line.split(" = ")
