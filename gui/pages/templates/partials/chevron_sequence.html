@@ -1,32 +1,29 @@
 <div class="sequence mb-3">
     <div class="row">
-        <div class="col-lg-3">
-            <strong>{{ seq_name }}:&nbsp;</strong>
-            <button class="btn btn-primary" onclick="copyDNA('{{ seq_latex }}')">Copy Sequence</button>
+        <div class="col-lg-2">
+            <strong>{{ seq_name }}:</strong>
         </div>
-        <div class="col-lg-9">
+        <div class="col-lg-8">
             <div class="chevron-container">
                 {% for domain in seq_domains %}
-                    {% if domain == "A" %}
-                        {% set color = "#646FFA" %}
-                    {% elif domain == "T" %}
-                        {% set color = "#F56867" %}
-                    {% elif domain == "G" %}
-                        {% set color = "#5CB575" %}
-                    {% elif domain == "C" %}
-                        {% set color = "#F56867" %}
-                    {% else %}
-                        {% set color = "var(--uk-secondary-lighter-blue)" %}
-                    {% endif %}
-                    <div class="chevron" title="{{ domain }}" style="background-color: {{ color }};">
+                    <div class="chevron" title="{{ domain }}"
+                         style="background-color:
+                         {% if domain == "A" %} var(--uk-secondary-dark-blue)
+                         {% elif domain == "T" %} #F56867
+                         {% elif domain == "G" %} #5CB575
+                         {% elif domain == "C" %} #F0B93C
+                         {% else %} var(--uk-secondary-lighter-blue)
+                         {% endif %};">
                         <span class="domain-label">{{ domain }}</span>
                     </div>
                 {% endfor %}
             </div>
         </div>
+        <div class="col-lg-2" style="display:flex;justify-content: center;">
+            <button class="btn btn-sm btn-secondary" onclick="copyDNA('{{ seq_latex }}')">Copy Seq.</button>
+        </div>
     </div>
 </div>
-
 
 <style>
     .chevron-container {
@@ -77,6 +74,13 @@
 </style>
 <script>
     function copyDNA(latex) {
-        /* Copy DNA sequence to clipboard */
+        // Create a temporary textarea element to hold the LaTeX string
+        const tempInput = document.createElement("textarea");
+        tempInput.value = latex;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("DNA sequence copied to clipboard!");
     }
 </script>

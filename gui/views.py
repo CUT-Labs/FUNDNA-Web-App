@@ -101,6 +101,7 @@ def convertResult(request):
         estimation = 0
 
         nuskell_output = None
+        piperine_output = None
 
         # SECTION 1: FUNCTION
         # Approximate functions with taylor series to the degree
@@ -179,41 +180,43 @@ def convertResult(request):
 
         # SECTION 4: DSD
         # Handle CRN/DSD conversion using Nuskell
-        try:
-            # Create CRN object
-            if crn is not None:
-                # Run Nuskell and get the temp directory
-                temp_dir = run_nuskell(crn, scheme, verify)
+        if "dsd" in selected_sections:
+            try:
+                # Create CRN object
+                if crn is not None:
+                    # Run Nuskell and get the temp directory
+                    temp_dir = run_nuskell(crn, scheme, verify)
 
-                # Process the Nuskell output files
-                nuskell_output = process_nuskell_output(temp_dir)
+                    # Process the Nuskell output files
+                    nuskell_output = process_nuskell_output(temp_dir)
 
-                print(nuskell_output)
+                    print(nuskell_output)
 
-                # Cleanup the temporary directory
-                cleanup_temp_dir(temp_dir)
-        except Exception as err:
-            return HttpResponse(f"Error processing Nuskell: {str(err)}")
+                    # Cleanup the temporary directory
+                    cleanup_temp_dir(temp_dir)
+            except Exception as err:
+                return HttpResponse(f"Error processing Nuskell: {str(err)}")
 
-        # SECTION 4: DSD
-        # Handle CRN/DSD conversion using Nuskell
-        try:
-            # Create CRN object
-            if crn is not None:
-                # Run Nuskell and get the temp directory
-                temp_dir = run_piperine(crn)
+        # SECTION 4: DNA
+        # Handle CRN/DNA conversion using Piperine
+        if "dna" in selected_sections:
+            try:
+                # Create CRN object
+                if crn is not None:
+                    # Run piperine and get the temp directory
+                    temp_dir = run_piperine(crn)
 
-                print(f"Piperine Temp Directory: {temp_dir}")
+                    print(f"Piperine Temp Directory: {temp_dir}")
 
-                # Process the piperine output files
-                piperine_output = process_piperine_output(temp_dir)
+                    # Process the piperine output files
+                    piperine_output = process_piperine_output(temp_dir)
 
-                print(piperine_output)
+                    print(piperine_output)
 
-                # Cleanup the temporary directory
-                cleanup_temp_dir(temp_dir)
-        except Exception as err:
-            return HttpResponse(f"Error processing Piperine: {str(err)}")
+                    # Cleanup the temporary directory
+                    cleanup_temp_dir(temp_dir)
+            except Exception as err:
+                return HttpResponse(f"Error processing Piperine: {str(err)}")
 
         context = {
             'from_level': from_level,
