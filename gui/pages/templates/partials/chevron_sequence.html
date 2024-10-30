@@ -1,0 +1,45 @@
+<div class="sequence">
+    <div class="row" style="display:flex;align-items: center;">
+        <div class="col-lg-2">
+            <strong>
+                {{ seq_name }}:<br/>
+                <small>
+                    {% if seq_isNuc %}
+                    ({{ seq_domains|length }} nucleotides)
+                    {% else %}
+                        ({{ seq_domains|length }} domains)
+                    {% endif %}
+                </small>
+            </strong>
+        </div>
+        <div class="col-lg-9">
+            <div class="chevron-container">
+                <div class="row seq">
+                    {% for domain in seq_domains %}
+                        {% if domain == "+" %}
+                            </div>
+                            <div class="row seq">
+                        {% else %}
+                            <div class="chevron" title="{{ domain }}"
+                             style="background-color:
+                             {% if domain == "A" %} var(--uk-secondary-dark-blue)
+                             {% elif domain == "T" %} #F56867
+                             {% elif domain == "G" %} #5CB575
+                             {% elif domain == "C" %} #F0B93C
+                             {% else %} var(--uk-secondary-lighter-blue)
+                             {% endif %};">
+                            <span class="domain-label" style=" color:
+                                     {% if domain == "A" or domain == "T" or domain == "G" or domain == "C" %} #FFFFFF
+                                     {% else %} var(--uk-secondary-dark-blue)
+                                     {% endif %} !important;">{{ domain }}</span>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-1" style="display:flex;justify-content: center;">
+            <button class="btn btn-sm btn-secondary" onclick="copyDNA('{{ seq_latex }}')">Copy</button>
+        </div>
+    </div>
+</div>

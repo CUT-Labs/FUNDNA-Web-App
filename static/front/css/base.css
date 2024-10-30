@@ -54,6 +54,12 @@ body {
     color: var(--uk-secondary-dark-blue) !important;
 }
 
+.btn-secondary {
+    background-color: var(--uk-secondary-dark-blue) !important;
+    border-color: var(--uk-secondary-dark-blue) !important;
+    color: var(--uk-secondary-lighter-blue) !important;
+}
+
 a {
     color: var(--bs-primary) !important;
 }

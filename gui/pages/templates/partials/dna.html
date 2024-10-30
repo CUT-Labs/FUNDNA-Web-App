@@ -1,0 +1,267 @@
+{% load custom_filters %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h4 style="text-align: center">DNA Simulation Results (Piperine)</h4>
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" data-bs-toggle="tab" href="#score-report" aria-selected="true" role="tab">Score Report</a>
+            </li>
+            {% for design in piperine_output.Designs %}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" data-bs-toggle="tab" href="#design-{{ forloop.counter }}" aria-selected="false" role="tab">{{ design.Name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <br/>
+        <div id="myTabContent" class="tab-content">
+            <!-- Score Report Tab -->
+            <div class="tab-pane fade show active" id="score-report" role="tabpanel">
+                <h5>Raw Scores</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Design Name</th>
+                                {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
+                                    <th>{{ score_name }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for design in piperine_output.Designs %}
+                                <tr>
+                                    <td>{{ design.Name }}</td>
+                                    {% for score_name, score in design.RawScores.ToDict.items %}
+                                        <td>{{ score.0|default:"N/A" }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <h5>Weighted Scores</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Design Name</th>
+                                {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
+                                    <th>{{ score_name }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for design in piperine_output.Designs %}
+                                <tr>
+                                    <td>{{ design.Name }}</td>
+                                    {% for score_name, score in design.RawScores.ToDict.items %}
+                                        <td>{{ score|weighted_score }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Design Tabs -->
+            {% for design in piperine_output.Designs %}
+                <div class="tab-pane fade" id="design-{{ forloop.counter }}" role="tabpanel">
+                    <h3>{{ design.Name }}</h3>
+
+                    <!-- Raw Scores Array Table -->
+                    <h5>Raw Scores</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
+                                        <th>{{ score_name }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                        <td>Raw</td>
+                                        {% for score_name, score in design.RawScores.ToDict.items %}
+                                            <td>{{ score.0|default:"N/A" }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        <td>Weighted</td>
+                                        {% for score_name, score in design.RawScores.ToDict.items %}
+                                            <td>{{ score|weighted_score }}</td>
+                                        {% endfor %}
+                                    </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <br/>
+                    <!-- Foundational Information -->
+                    <h4>Foundational Information</h4>
+                    <div class="row dna-section">
+                        <div class="col-1 dna-section-label">
+                            <h5>Sequences</h5>
+                        </div>
+                        <div class="col-11">
+                            {% for sequence in design.Sequences %}
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=sequence.Name seq_domains=sequence.Sequence seq_isNuc=True %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row dna-section">
+                        <div class="col-1 dna-section-label">
+                            <h5>Strands</h5>
+                        </div>
+                        <div class="col-11">
+                            {% for strand in design.Strands %}
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=strand.Name seq_domains=strand.Strand seq_isNuc=True %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row dna-section">
+                        <div class="col-1 dna-section-label">
+                            <h5>Structures</h5>
+                        </div>
+                        <div class="col-11">
+                            {% for structure in design.Structures %}
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=structure.Name seq_domains=structure.Structure seq_isNuc=True %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br/>
+
+                    <!-- Complexes Information -->
+                    <h4>Complexes</h4>
+                    {% for complex in design.Complexes %}
+                        <div class="row dna-section">
+                            <div class="col-1 dna-section-label">
+                                <h5>{{ complex.Name }} {% if complex.IsFuel %}(Fuel Cmp.){% endif %}</h5>
+                            </div>
+                            <div class="col-11">
+                                {% for strand in complex.Strands %}
+                                    {% include 'templates/partials/chevron_sequence.html' with seq_name=strand.Name seq_domains=strand.Strand seq_isNuc=True %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .table th {
+        --bs-table-color-type: var(--bs-table-striped-color);
+        --bs-table-bg-type: var(--bs-table-striped-bg);
+    }
+
+    /* Styling for the sticky, vertical-aligned labels */
+    .dna-section-label {
+        position: sticky;
+        top: 0; /* Sticky position */
+        display: flex;
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+        writing-mode: vertical-rl; /* Rotate text vertically */
+        text-orientation: mixed; /* Keeps letters upright */
+        font-weight: bold;
+        background-color: var(--uk-secondary-lighter-blue);
+        z-index: 1;
+        transform: rotate(180deg); /* Rotate text to the correct orientation */
+        padding: 10px; /* Padding for breathing room */
+        border-right: 1px solid var(--uk-secondary-dark-blue);
+    }
+
+    .dna-section {
+        border: 1px solid var(--uk-secondary-dark-blue);
+        display: flex; /* Flex container to align dna-section-label */
+        align-items: stretch; /* Ensure label takes full height */
+    }
+
+    .table th {
+        --bs-table-color-type: var(--bs-table-striped-color);
+        --bs-table-bg-type: var(--bs-table-striped-bg);
+    }
+</style>
+
+<style>
+    .chevron-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .chevron {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 65px;
+        height: 30px;
+        margin-right: -10px;
+        background-color: var(--uk-secondary-lighter-blue);
+        clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
+        text-align: center;
+        font-size: 0.8rem;
+    }
+
+    .chevron .domain-label {
+        color: var(--primary);
+        font-weight: bold;
+        white-space: nowrap;
+        padding-left: 5px;
+    }
+
+    .chevron::before {
+        content: attr(title);
+        position: absolute;
+        bottom: -18px;
+        font-size: 0.7rem;
+        font-weight: normal;
+        color: var(--primary);
+    }
+
+    /* Bottom border for all `.sequence` elements except the last one */
+    .sequence:not(:last-child) {
+        border-bottom: 1px solid var(--uk-secondary-dark-blue);
+    }
+
+    .sequence {
+        display: flex;
+        flex-direction: column;
+        padding: 5px 0;
+    }
+
+    .seq {
+        padding: 0.5em 0;
+        width: 100%;
+    }
+
+    /* Bottom border for all `.sequence` elements except the last one */
+    .seq:not(:last-child) {
+        border-bottom: 1px solid var(--uk-secondary-lighter-blue);
+    }
+
+    .signal-complex strong {
+        margin-bottom: 5px;
+    }
+</style>
+<script>
+    function copyDNA(latex) {
+        // Create a temporary textarea element to hold the LaTeX string
+        const tempInput = document.createElement("textarea");
+        tempInput.value = latex;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("DNA sequence copied to clipboard!");
+    }
+</script>

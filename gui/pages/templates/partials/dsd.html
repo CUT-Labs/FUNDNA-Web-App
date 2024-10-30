@@ -1,6 +1,6 @@
 {% load static %}
 <div class="row mb-4">
-    <h5>DSD Simulation Results:</h5>
+    <h4 style="text-align: center">DSD Simulation Results (Nuskell):</h4>
     <div class="col-md-12">
 
         <!-- Bootstrap Accordion -->
@@ -37,16 +37,7 @@
                     <div class="accordion-body">
                         <div class="signal-complexes">
                             {% for signal in nuskell_output.species.signal %}
-                                <div class="signal-complex mb-3">
-                                    <strong>{{ signal.0 }}:</strong>
-                                    <div class="chevron-container">
-                                        {% for domain in signal.1.split %}
-                                            <div class="chevron" title="{{ domain }}">
-                                                <span class="domain-label">{{ domain }}</span>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+                                {% include 'templates/partials/chevron_sequence.html' with seq_name=signal.0 seq_domains=signal.1.split seq_latex=signal.1 seq_isNuc=False %}
                             {% endfor %}
                         </div>
                     </div>
@@ -123,52 +114,6 @@
 </div>
 
 <style>
-    .chevron-container {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .chevron {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 30px;
-        margin-right: 5px;
-        background-color: transparent;
-        border: 2px solid var(--primary);
-        clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
-        text-align: center;
-        font-size: 0.8rem;
-    }
-
-    .chevron .domain-label {
-        color: var(--primary);
-        font-weight: bold;
-        white-space: nowrap;
-    }
-
-    .chevron::before {
-        content: attr(title);
-        position: absolute;
-        bottom: -18px;
-        font-size: 0.7rem;
-        font-weight: normal;
-        color: var(--primary);
-    }
-
-    .signal-complex {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 15px;
-    }
-
-    .signal-complex strong {
-        margin-bottom: 5px;
-    }
-
     .accordion-button {
         background-color: var(--uk-secondary-lighter-blue);
         color: var(--uk-secondary-dark-blue);

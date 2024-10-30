@@ -8,6 +8,8 @@ from gui.methods.FUNDNAUtil import *
 from gui.classes import *
 from gui.classes.fsm import *
 
+import re
+
 import gui as gui
 
 import sympy
@@ -99,6 +101,7 @@ def convertResult(request):
         estimation = 0
 
         nuskell_output = None
+        piperine_output = None
 
         # SECTION 1: FUNCTION
         # Approximate functions with taylor series to the degree
@@ -177,21 +180,92 @@ def convertResult(request):
 
         # SECTION 4: DSD
         # Handle CRN/DSD conversion using Nuskell
-        try:
-            # Create CRN object
-            if crn is not None:
-                # Run Nuskell and get the temp directory
-                temp_dir = run_nuskell(crn, scheme, verify)
+        if "dsd" in selected_sections:
+            try:
+                # Create CRN object
+                if crn is not None:
+                    # Run Nuskell and get the temp directory
+                    temp_dir = run_nuskell(crn, scheme, verify)
 
-                # Process the Nuskell output files
-                nuskell_output = process_nuskell_output(temp_dir)
+                    # Process the Nuskell output files
+                    nuskell_output = process_nuskell_output(temp_dir)
 
-                print(nuskell_output)
+                    print(nuskell_output)
 
-                # Cleanup the temporary directory
-                cleanup_temp_dir(temp_dir)
-        except Exception as err:
-            return HttpResponse(f"Error processing Nuskell: {str(err)}")
+                    # Cleanup the temporary directory
+                    cleanup_temp_dir(temp_dir)
+            except Exception as err:
+                return HttpResponse(f"Error processing Nuskell: {str(err)}")
+
+        # SECTION 5: DNA
+        # Handle CRN/DNA conversion using Piperine
+        debug = False
+        if "dna" in selected_sections:
+            if debug:
+                piperine_output = PiperineOutput()
+
+                # Adding Designs with fake data
+                for i in range(3):
+                    design = Design(f"Design_{i + 1}")
+
+                    # Assign random scores to RawScores in each design
+                    design.RawScores.TSI_avg = random.uniform(0, 10)
+                    design.RawScores.TSI_max = random.uniform(10, 20)
+                    design.RawScores.TO_avg = random.uniform(0, 10)
+                    design.RawScores.TO_max = random.uniform(10, 20)
+
+                    # Adding Sequences
+                    design.Sequences = [
+                        Sequence("Seq1", "ATGCAT"),
+                        Sequence("Seq2", "TACGCG")
+                    ]
+
+                    # Adding Strands
+                    design.Strands = [
+                        Strand("Strand1", "ATGCGT", False),
+                        Strand("Strand2", "TACGGA", False)
+                    ]
+
+                    # Adding Structures
+                    design.Structures = [
+                        Structure("Struct1", "TACGGA"),
+                        Structure("Struct2", "ATGCGT"),
+                        Structure("Struct3", "ATGCGT+TACGGATACGGA+ATGCGTATGCGT"),
+                        Structure("Struct4", "A...G...T")
+                    ]
+
+                    # Adding SignalStrands
+                    design.SignalStrands = [
+                        Strand("Signal1", "ATGCC", True),
+                        Strand("Signal2", "CGTAA", True)
+                    ]
+
+                    # Adding Complexes
+                    design.Complexes = [
+                        Complex("Complex1", [Strand("Strand1", "ATGCGT", False), Strand("Strand2", "TACGGA", False)],
+                                True)
+                    ]
+
+                    # Append design to piperine_output
+                    piperine_output.Designs.append(design)
+            else:
+                try:
+                    # Create CRN object
+                    if crn is not None:
+                        # Run piperine and get the temp directory
+                        temp_dir = run_piperine(crn)
+
+                        print(f"Piperine Temp Directory: {temp_dir}")
+
+                        # Process the piperine output files
+                        piperine_output = process_piperine_output(temp_dir)
+
+                        print(piperine_output)
+
+                        # Cleanup the temporary directory
+                        cleanup_temp_dir(temp_dir)
+                except Exception as err:
+                    return HttpResponse(f"Error processing Piperine: {str(err)}")
 
         context = {
             'from_level': from_level,
@@ -215,6 +289,7 @@ def convertResult(request):
             'crn_table': crn_table,
 
             'nuskell_output': nuskell_output,  # Includes enum_data, sys_data, and log_data
+            'piperine_output': piperine_output,
         }
 
         return render(request, 'gui/convertResult.html', context)
