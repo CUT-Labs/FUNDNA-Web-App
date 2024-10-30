@@ -460,15 +460,15 @@ def run_piperine(crn, options="--candidates 3 -q"):
             print(
                 f"Suggested parameters: energy={suggested_energy}, maxspurious={suggested_maxspurious}, deviation={suggested_deviation}... trying again...\n\n")
 
-            # Modify the pipOptions string with suggested parameters
+            # Modify the options string with suggested parameters
             import re
-            original_candidates_match = re.search(r"--candidates (\d+)", pipOptions)
+            original_candidates_match = re.search(r"--candidates (\d+)", options)
             original_candidates = str(original_candidates_match.group(1)) if original_candidates_match else "3"
 
-            pipOptions = f"--candidates {original_candidates} --energy {suggested_energy} --maxspurious {suggested_maxspurious} --deviation {suggested_deviation} -q"
+            options = f"--candidates {original_candidates} --energy {suggested_energy} --maxspurious {suggested_maxspurious} --deviation {suggested_deviation} -q"
 
             # Retry Piperine with suggested parameters
-            run_piperine(crn, options=pipOptions)
+            run_piperine(crn, options=options)
 
     return temp_dir
 

@@ -1,0 +1,82 @@
+<div class="sequence mb-3">
+    <div class="row">
+        <div class="col-lg-3">
+            <strong>{{ seq_name }}:&nbsp;</strong>
+            <button class="btn btn-primary" onclick="copyDNA('{{ seq_latex }}')">Copy Sequence</button>
+        </div>
+        <div class="col-lg-9">
+            <div class="chevron-container">
+                {% for domain in seq_domains %}
+                    {% if domain == "A" %}
+                        {% set color = "#646FFA" %}
+                    {% elif domain == "T" %}
+                        {% set color = "#F56867" %}
+                    {% elif domain == "G" %}
+                        {% set color = "#5CB575" %}
+                    {% elif domain == "C" %}
+                        {% set color = "#F56867" %}
+                    {% else %}
+                        {% set color = "var(--uk-secondary-lighter-blue)" %}
+                    {% endif %}
+                    <div class="chevron" title="{{ domain }}" style="background-color: {{ color }};">
+                        <span class="domain-label">{{ domain }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .chevron-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .chevron {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 65px;
+        height: 30px;
+        margin-right: -10px;
+        background-color: var(--uk-secondary-lighter-blue);
+        clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
+        text-align: center;
+        font-size: 0.8rem;
+    }
+
+    .chevron .domain-label {
+        color: var(--primary);
+        font-weight: bold;
+        white-space: nowrap;
+        padding-left: 5px;
+    }
+
+    .chevron::before {
+        content: attr(title);
+        position: absolute;
+        bottom: -18px;
+        font-size: 0.7rem;
+        font-weight: normal;
+        color: var(--primary);
+    }
+
+    .sequence {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+
+    .signal-complex strong {
+        margin-bottom: 5px;
+    }
+</style>
+<script>
+    function copyDNA(latex) {
+        /* Copy DNA sequence to clipboard */
+    }
+</script>
