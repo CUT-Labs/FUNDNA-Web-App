@@ -5,9 +5,10 @@ class Sequence:
 
 
 class Strand:
-    def __init__(self, name, strand):
+    def __init__(self, name, strand, issignal):
         self.Name = name
         self.Strand = strand
+        self.IsSignal = issignal
 
 
 class Structure:

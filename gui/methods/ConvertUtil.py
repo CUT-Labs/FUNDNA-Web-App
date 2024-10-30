@@ -550,7 +550,7 @@ def process_piperine_output(temp_dir):
                         parts = line.split(" : ")
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
-                        design.SignalStrands.append(Strand(strand_name, strand_seq))
+                        design.SignalStrands.append(Strand(strand_name, strand_seq, True))
                         print(f"\tSignal Strand: {strand_name} - {strand_seq}")
                     elif line.startswith("Complex") and \
                             (current_section == "fcomplexes" or current_section == "complexes"):
@@ -566,10 +566,10 @@ def process_piperine_output(temp_dir):
                         parts = line.split(" : ")
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
-                        current_complex.Strands.append(Strand(strand_name, strand_seq))
+                        current_complex.Strands.append(Strand(strand_name, strand_seq, False))
                         print(f"\t\tStrand: {strand_name} - {strand_seq}")
 
-            elif file.endswith(".seq"):
+            elif file.endswith(".seqs"):
                 design_name = file.split(".seq")[0]
                 with open(file_path, "r") as f:
                     lines = f.readlines()
@@ -587,11 +587,11 @@ def process_piperine_output(temp_dir):
                     line = line.strip()
                     if line.startswith("# "):
                         section_name = line.replace("# ", "").lower()
-                        if section_name == "Sequences":
+                        if section_name == "sequences":
                             current_section = "sequences"
-                        elif section_name == "Strands":
+                        elif section_name == "strands":
                             current_section = "strands"
-                        elif section_name == "Structures":
+                        elif section_name == "structures":
                             current_section = "structures"
                     elif line.startswith("sequence") and current_section == "sequences":
                         parts = line.split(" = ")
@@ -603,7 +603,7 @@ def process_piperine_output(temp_dir):
                         parts = line.split(" = ")
                         strand_name = parts[0].replace("strand ", "").strip()
                         strand = parts[1].strip()
-                        design.Strands.append(Strand(strand_name, strand))
+                        design.Strands.append(Strand(strand_name, strand, False))
                         print(f"\tStrand: {strand_name} - {strand}")
                     elif line.startswith("structure") and current_section == "structures":
                         parts = line.split(" = ")
