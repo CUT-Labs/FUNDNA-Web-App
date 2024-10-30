@@ -163,7 +163,7 @@
     /* Styling for the sticky, vertical-aligned labels */
     .dna-section-label {
         position: sticky;
-        top: 0; /* Set to 0 for a truly sticky effect */
+        top: 0; /* Sticky position */
         display: flex;
         align-items: center; /* Center vertically */
         justify-content: center; /* Center horizontally */
@@ -181,6 +181,12 @@
         border: 1px solid var(--uk-secondary-dark-blue);
         display: flex; /* Flex container to align dna-section-label */
         align-items: stretch; /* Ensure label takes full height */
+        overflow: auto; /* Enable scrolling inside the section */
+    }
+
+    /* Bottom border for all `.sequence` elements except the last one */
+    .sequence:not(:last-child) {
+        border-bottom: 1px solid var(--uk-secondary-dark-blue);
     }
 
     .table th {
@@ -188,3 +194,62 @@
         --bs-table-bg-type: var(--bs-table-striped-bg);
     }
 </style>
+
+<style>
+    .chevron-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .chevron {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 65px;
+        height: 30px;
+        margin-right: -10px;
+        background-color: var(--uk-secondary-lighter-blue);
+        clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
+        text-align: center;
+        font-size: 0.8rem;
+    }
+
+    .chevron .domain-label {
+        color: var(--primary);
+        font-weight: bold;
+        white-space: nowrap;
+        padding-left: 5px;
+    }
+
+    .chevron::before {
+        content: attr(title);
+        position: absolute;
+        bottom: -18px;
+        font-size: 0.7rem;
+        font-weight: normal;
+        color: var(--primary);
+    }
+
+    .sequence {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .signal-complex strong {
+        margin-bottom: 5px;
+    }
+</style>
+<script>
+    function copyDNA(latex) {
+        // Create a temporary textarea element to hold the LaTeX string
+        const tempInput = document.createElement("textarea");
+        tempInput.value = latex;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        alert("DNA sequence copied to clipboard!");
+    }
+</script>

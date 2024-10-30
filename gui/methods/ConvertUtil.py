@@ -524,7 +524,7 @@ def process_piperine_output(temp_dir):
             file_path = os.path.join(root, file)
             if file.endswith("_strands.txt"):
                 design_id = int((file.split("_strands.txt")[0]).split("y")[1])
-                design_name = f"design_{design_id}"
+                design_name = f"Design {design_id}"
                 with open(file_path, "r") as f:
                     lines = f.readlines()
 
@@ -562,7 +562,7 @@ def process_piperine_output(temp_dir):
                         current_complex = Complex(complex_name, [], isFuel)
                         design.Complexes.append(current_complex)
                         print(f"\tComplex: {complex_name}{' - Fuel' if isFuel else ''}")
-                    elif line.startswith("Strand") and current_section == "complexes":
+                    elif line.startswith("Strand") and (current_section == "complexes" or current_section == "fcomplexes"):
                         parts = line.split(" : ")
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
@@ -571,7 +571,7 @@ def process_piperine_output(temp_dir):
 
             elif file.endswith(".seqs"):
                 design_id = int((file.split(".seqs")[0]).split("y")[1])
-                design_name = f"design_{design_id}"
+                design_name = f"Design {design_id}"
                 with open(file_path, "r") as f:
                     lines = f.readlines()
 
@@ -641,7 +641,7 @@ def process_piperine_output(temp_dir):
                         values_list = [float(val.strip()) for val in values_str.split()]
 
                         # Find or create the design object
-                        design_name = f"design_{design_id}"
+                        design_name = f"Design {design_id}"
                         design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                         if not design:
                             design = Design(design_name)
