@@ -61,6 +61,7 @@ jobs:
             
             # Run the Docker container with environment variables
             docker run -d --name fundna_dev \
+              --restart always \
               --network=jphuse_network \
               -e MYSQLHOST=${{ secrets.MYSQLHOST }} \
               -e MYSQLPORT=${{ secrets.MYSQLPORT }} \
