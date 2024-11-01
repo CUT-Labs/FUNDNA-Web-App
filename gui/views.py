@@ -199,34 +199,68 @@ def convertResult(request):
 
         # SECTION 5: DNA
         # Handle CRN/DNA conversion using Piperine
+        transposed_scores = []
         debug = False
         if "dna" in selected_sections:
             if debug:
+                # Initialize PiperineOutput
                 piperine_output = PiperineOutput()
 
-                # Adding Designs with fake data
+                # Define raw scores, rank array, fractional excess, and percent badness for each design
+                raw_scores_data = [
+                    [0.05, 0.07, 4.23, 11.88, 51.00, 7.00, 0.40, 0.96, 0.43, 0.95, 5.50, 3.31, 1.00, 230.00, 0.00,
+                     2761.00, 358.50, 360.14, 0.02, 0.39],
+                    [0.05, 0.09, 5.34, 13.25, 49.00, 6.00, 0.40, 0.96, 0.40, 0.94, 5.33, 3.16, 6.00, 270.00, 0.00,
+                     2898.00, 386.50, 399.23, 0.02, 0.39],
+                    [0.04, 0.06, 9.33, 20.35, 29.00, 6.00, 0.42, 0.97, 0.42, 0.96, 7.02, 3.50, 4.00, 218.00, 0.00,
+                     2999.00, 356.50, 375.44, 0.02, 0.39]
+                ]
+
+                rank_array_data = [
+                    [1, 1, 0, 0, 2, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0],
+                    [2, 2, 1, 1, 1, 0, 2, 2, 2, 2, 0, 0, 2, 2, 0, 1, 2, 2, 0, 0],
+                    [0, 0, 2, 2, 0, 0, 0, 0, 1, 0, 2, 2, 1, 0, 0, 2, 0, 1, 0, 0]
+                ]
+
+                fractional_excess_data = [
+                    [0.09, 0.08, 0.00, 0.00, 0.76, 0.17, 0.04, 0.01, 0.00, 0.00, 0.03, 0.05, 0.00, 0.06, 0.00, 0.00,
+                     0.01, 0.00, 0.14, 0.00],
+                    [0.23, 0.41, 0.26, 0.12, 0.69, 0.00, 0.05, 0.01, 0.08, 0.02, 0.00, 0.00, 5.00, 0.24, 0.00, 0.05,
+                     0.08, 0.11, 0.00, 0.00],
+                    [0.00, 0.00, 1.20, 0.71, 0.00, 0.00, 0.00, 0.00, 0.03, 0.00, 0.32, 0.11, 3.00, 0.00, 0.00, 0.09,
+                     0.00, 0.04, 0.00, 0.00]
+                ]
+
+                percent_badness_data = [
+                    [40.99, 20.34, 0.00, 0.00, 100.00, 100.00, 79.91, 77.04, 0.00, 27.22, 10.01, 43.72, 0.00, 23.08,
+                     0.00, 0.00, 6.67, 0.00, 100.00, 0.00],
+                    [100.00, 100.00, 21.65, 16.15, 90.91, 0.00, 100.00, 100.00, 100.00, 100.00, 0.00, 0.00, 100.00,
+                     100.00, 0.00, 57.56, 100.00, 100.00, 0.00, 0.00],
+                    [0.00, 0.00, 100.00, 100.00, 0.00, 0.00, 0.00, 0.00, 37.50, 0.00, 100.00, 100.00, 60.00, 0.00, 0.00,
+                     100.00, 0.00, 39.16, 0.00, 0.00]
+                ]
+
+                # Populate PiperineOutput with designs and score arrays
                 for i in range(3):
-                    design = Design(f"Design_{i + 1}")
+                    design = Design(f"Design {i + 1}")
 
-                    # Assign random scores to RawScores in each design
-                    design.RawScores.TSI_avg = random.uniform(0, 10)
-                    design.RawScores.TSI_max = random.uniform(10, 20)
-                    design.RawScores.TO_avg = random.uniform(0, 10)
-                    design.RawScores.TO_max = random.uniform(10, 20)
+                    # Assign RawScores, RankArray, FractionalExcessArray, and PercentBadnessArray for each design
+                    design.RawScores.from_list(raw_scores_data[i])
+                    design.RankArray.from_list(rank_array_data[i])
+                    design.FractionalExcessArray.from_list(fractional_excess_data[i])
+                    design.PercentBadnessArray.from_list(percent_badness_data[i])
 
-                    # Adding Sequences
+                    # Add Sequences, Strands, Structures, SignalStrands, and Complexes with sample data
                     design.Sequences = [
                         Sequence("Seq1", "ATGCAT"),
                         Sequence("Seq2", "TACGCG")
                     ]
 
-                    # Adding Strands
                     design.Strands = [
                         Strand("Strand1", "ATGCGT", False),
                         Strand("Strand2", "TACGGA", False)
                     ]
 
-                    # Adding Structures
                     design.Structures = [
                         Structure("Struct1", "TACGGA"),
                         Structure("Struct2", "ATGCGT"),
@@ -234,20 +268,19 @@ def convertResult(request):
                         Structure("Struct4", "A...G...T")
                     ]
 
-                    # Adding SignalStrands
                     design.SignalStrands = [
                         Strand("Signal1", "ATGCC", True),
                         Strand("Signal2", "CGTAA", True)
                     ]
 
-                    # Adding Complexes
                     design.Complexes = [
                         Complex("Complex1", [Strand("Strand1", "ATGCGT", False), Strand("Strand2", "TACGGA", False)],
                                 True)
                     ]
 
-                    # Append design to piperine_output
+                    # Append each design to PiperineOutput
                     piperine_output.Designs.append(design)
+                piperine_output.MetaRanksArray()
             else:
                 try:
                     # Create CRN object
@@ -266,6 +299,28 @@ def convertResult(request):
                         cleanup_temp_dir(temp_dir)
                 except Exception as err:
                     return HttpResponse(f"Error processing Piperine: {str(err)}")
+
+            if piperine_output:
+                _, ranked_meta_scores, _, _ = piperine_output.MetaRanksArray()
+
+                # Transpose ranked_meta_scores for template use
+                design_names = ranked_meta_scores["Design"]
+                num_designs = len(design_names)
+
+                for i in range(num_designs):
+                    design_row = [
+                        design_names[i],  # Design name
+                        ranked_meta_scores["Meta Sum"][i],
+                        ranked_meta_scores["Worst-rank"][i],
+                        ranked_meta_scores["Worst-weighted-rank"][i],
+                        ranked_meta_scores["Sum-of-ranks"][i],
+                        ranked_meta_scores["Weighted Sum-of-ranks"][i],
+                        ranked_meta_scores["Fractional-excess"][i],
+                        ranked_meta_scores["Weighted Fractional-excess"][i],
+                        ranked_meta_scores["Percent-badness"][i],
+                        ranked_meta_scores["Weighted Percent-badness"][i],
+                    ]
+                    transposed_scores.append(design_row)
 
         context = {
             'from_level': from_level,
@@ -290,6 +345,7 @@ def convertResult(request):
 
             'nuskell_output': nuskell_output,  # Includes enum_data, sys_data, and log_data
             'piperine_output': piperine_output,
+            'transposed_scores': transposed_scores,
         }
 
         return render(request, 'gui/convertResult.html', context)
