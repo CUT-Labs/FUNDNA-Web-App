@@ -173,7 +173,7 @@ def graphOriginalAndRearrangement(originalFunction, rearrangementLambda, pointEs
     return "data:image/svg+xml;base64," + base64.b64encode(graph_io.getvalue()).decode()
 
 
-def dualGraphWithErrors(x_values, y_values, expected_values, title, expectedName, func2Name):
+def dualGraphWithErrors(x_values, y_values, expected_values, title, expectedName, func2Name, pltVariable=False):
     averageError, std_dev, ratioUnder, mse, mae = analyzeError(y_values - expected_values)
 
     error_labels = [
@@ -210,6 +210,9 @@ def dualGraphWithErrors(x_values, y_values, expected_values, title, expectedName
     ax_caption.axis('off')  # Hide axis for the caption subplot
 
     plt.tight_layout()  # Adjust layout to prevent overlap
+
+    if pltVariable:
+        return plt
 
     # Save plot to a BytesIO object
     buf = BytesIO()

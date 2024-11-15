@@ -16,52 +16,305 @@
         <div id="myTabContent" class="tab-content">
             <!-- Score Report Tab -->
             <div class="tab-pane fade show active" id="score-report" role="tabpanel">
-                <h5>Raw Scores</h5>
-                <div class="table-responsive">
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Design Name</th>
-                                {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
-                                    <th>{{ score_name }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for design in piperine_output.Designs %}
-                                <tr>
-                                    <td>{{ design.Name }}</td>
-                                    {% for score_name, score in design.RawScores.ToDict.items %}
-                                        <td>{{ score.0|default:"N/A" }}</td>
+                <!-- Best Design Section -->
+                <div class="best-design-section text-center my-4">
+                    <h2 class="display-5">🏆 Best Design(s) 🏆</h2>
+                    <p class="lead">
+                        <strong style="font-weight: bold">{{ piperine_output.MetaRanksArray.3|join:", " }}</strong> achieved the most optimal meta ranking with a score of
+                        <span class="badge bg-success">{{ piperine_output.MetaRanksArray.2 }}</span>
+                    </p>
+                    <hr class="my-4">
+                </div>
+
+                <!-- Meta Ranking Section -->
+                <div class="section">
+                    <h3 class="text-primary text-center">Meta Ranking Summary</h3>
+
+                    <!-- Meta Array Table -->
+                    <div class="score-table my-4">
+                        <h5 class="text-secondary">Meta Array Table</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Design Name</th>
+                                        <th>Meta Sum</th>
+                                        <th>Worst-rank</th>
+                                        <th>Worst-weighted-rank</th>
+                                        <th>Sum-of-ranks</th>
+                                        <th>Weighted Sum-of-ranks</th>
+                                        <th>Fractional-excess</th>
+                                        <th>Weighted Fractional-excess</th>
+                                        <th>Percent-badness</th>
+                                        <th>Weighted Percent-badness</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in transposed_scores %}
+                                        <tr>
+                                            {% for cell in row %}
+                                                <td>{{ cell|format_meta_cell }}</td>
+                                            {% endfor %}
+                                        </tr>
                                     {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Best/Worst by Category -->
+                    <div class="best-worst-categories my-4">
+                        <h5 class="text-secondary">Best and Worst for Each Category</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Best</th>
+                                        <th>Worst</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Worst-rank</td>
+                                        <td>{{ piperine_output.WorstRank.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.WorstRank.1|score_and_rank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Worst-weighted-rank</td>
+                                        <td>{{ piperine_output.WorstWeightedRank.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.WorstWeightedRank.1|score_and_rank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sum-of-ranks</td>
+                                        <td>{{ piperine_output.SumOfRanks.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.SumOfRanks.1|score_and_rank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Weighted Sum-of-ranks</td>
+                                        <td>{{ piperine_output.WeightedSumOfRank.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.WeightedSumOfRank.1|score_and_rank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fractional-excess</td>
+                                        <td>{{ piperine_output.FractionalExcess.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.FractionalExcess.1|score_and_rank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Weighted Fractional-excess</td>
+                                        <td>{{ piperine_output.WeightedFractionalExcess.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.WeightedFractionalExcess.1|score_and_rank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Percent-badness</td>
+                                        <td>{{ piperine_output.PercentBadness.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.PercentBadness.1|score_and_rank }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Weighted Percent-badness</td>
+                                        <td>{{ piperine_output.WeightedPercentBadness.0|score_and_rank }}</td>
+                                        <td>{{ piperine_output.WeightedPercentBadness.1|score_and_rank }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <br/>
-                <h5>Weighted Scores</h5>
-                <div class="table-responsive">
-                    <table class="table table-sm table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Design Name</th>
-                                {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
-                                    <th>{{ score_name }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for design in piperine_output.Designs %}
-                                <tr>
-                                    <td>{{ design.Name }}</td>
-                                    {% for score_name, score in design.RawScores.ToDict.items %}
-                                        <td>{{ score|weighted_score }}</td>
+
+                <!-- Raw Scores Table -->
+                <div class="section">
+                    <h3 class="text-primary text-center">Raw Scores</h3>
+                    <div class="score-table my-4">
+                        <h5 class="text-secondary">Raw & Weighted Scores of Each Piperine Design</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Design Name</th>
+                                        {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
+                                            <th>{{ score_name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Unweighted Raw Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }}</td>
+                                            {% for score_name, score in design.RawScores.ToDict.items %}
+                                                {% if score.0 is not None %}
+                                                    <td>{{ score.0 }}</td>
+                                                {% else %}
+                                                    <td>N/A</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
                                     {% endfor %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    <!-- Divider Row -->
+                                    <tr class="table-divider">
+                                        <td colspan="{{ piperine_output.Designs.0.RawScores.ToDict|length|add:1 }}" style="border-top: 2px solid black;"></td>
+                                    </tr>
+                                    <!-- Weighted Raw Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }} (Weighted)</td>
+                                            {% for score_name, score in design.RawScores.ToDict.items %}
+                                                <td>{{ score|weighted_score }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <!-- Rank Array Table -->
+                <div class="section">
+                    <h3 class="text-primary text-center">Rank Array</h3>
+                    <div class="score-table my-4">
+                        <h5 class="text-secondary">Ranked & Weighted-Ranked Scores of Each Piperine Design</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Design Name</th>
+                                        {% for score_name, score in piperine_output.Designs.0.RankArray.ToDict.items %}
+                                            <th>{{ score_name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Unweighted Rank Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }}</td>
+                                            {% for score_name, score in design.RankArray.ToDict.items %}
+                                                {% if score.0 is not None %}
+                                                    <td>{{ score.0 }}</td>
+                                                {% else %}
+                                                    <td>N/A</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    <!-- Divider Row -->
+                                    <tr class="table-divider">
+                                        <td colspan="{{ piperine_output.Designs.0.RankArray.ToDict|length|add:1 }}" style="border-top: 2px solid black;"></td>
+                                    </tr>
+                                    <!-- Weighted Rank Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }} (Weighted)</td>
+                                            {% for score_name, score in design.RankArray.ToDict.items %}
+                                                <td>{{ score|weighted_score }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <!-- Fractional Excess Array Table -->
+                <div class="section">
+                    <h3 class="text-primary text-center">Fractional Excess Array</h3>
+                    <div class="score-table my-4">
+                        <h5 class="text-secondary">Fractional Excess & Weighted Fractional Excess Scores of Each Piperine Design</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Design Name</th>
+                                        {% for score_name, score in piperine_output.Designs.0.FractionalExcessArray.ToDict.items %}
+                                            <th>{{ score_name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Unweighted Fractional Excess Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }}</td>
+                                            {% for score_name, score in design.FractionalExcessArray.ToDict.items %}
+                                                {% if score.0 is not None %}
+                                                    <td>{{ score.0 }}</td>
+                                                {% else %}
+                                                    <td>N/A</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    <!-- Divider Row -->
+                                    <tr class="table-divider">
+                                        <td colspan="{{ piperine_output.Designs.0.FractionalExcessArray.ToDict|length|add:1 }}" style="border-top: 2px solid black;"></td>
+                                    </tr>
+                                    <!-- Weighted Fractional Excess Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }} (Weighted)</td>
+                                            {% for score_name, score in design.FractionalExcessArray.ToDict.items %}
+                                                <td>{{ score|weighted_score }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <!-- Percent Badness Array Table -->
+                <div class="section">
+                    <h3 class="text-primary text-center">Percent Badness Array</h3>
+                    <div class="score-table my-4">
+                        <h5 class="text-secondary">Percent Badness & Weighted Percent Badness Scores of Each Piperine Design</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Design Name</th>
+                                        {% for score_name, score in piperine_output.Designs.0.PercentBadnessArray.ToDict.items %}
+                                            <th>{{ score_name }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Unweighted Percent Badness Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }}</td>
+                                            {% for score_name, score in design.PercentBadnessArray.ToDict.items %}
+                                                {% if score.0 is not None %}
+                                                    <td>{{ score.0 }}</td>
+                                                {% else %}
+                                                    <td>N/A</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    <!-- Divider Row -->
+                                    <tr class="table-divider">
+                                        <td colspan="{{ piperine_output.Designs.0.PercentBadnessArray.ToDict|length|add:1 }}" style="border-top: 2px solid black;"></td>
+                                    </tr>
+                                    <!-- Weighted Percent Badness Scores -->
+                                    {% for design in piperine_output.Designs %}
+                                        <tr>
+                                            <td>{{ design.Name }} (Weighted)</td>
+                                            {% for score_name, score in design.PercentBadnessArray.ToDict.items %}
+                                                <td>{{ score|weighted_score }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -71,32 +324,38 @@
                     <h3>{{ design.Name }}</h3>
 
                     <!-- Raw Scores Array Table -->
-                    <h5>Raw Scores</h5>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
-                                        <th>{{ score_name }}</th>
-                                    {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <div class="score-table my-4">
+                        <h5 class="text-secondary">Raw & Weighted Scores for {{ design.Name }}</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
                                     <tr>
-                                        <td>Raw</td>
-                                        {% for score_name, score in design.RawScores.ToDict.items %}
-                                            <td>{{ score.0|default:"N/A" }}</td>
+                                        <th>Type</th>
+                                        {% for score_name, score in piperine_output.Designs.0.RawScores.ToDict.items %}
+                                            <th>{{ score_name }}</th>
                                         {% endfor %}
                                     </tr>
-                                    <tr>
-                                        <td>Weighted</td>
-                                        {% for score_name, score in design.RawScores.ToDict.items %}
-                                            <td>{{ score|weighted_score }}</td>
-                                        {% endfor %}
-                                    </tr>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>Raw</td>
+                                            {% for score_name, score in design.RawScores.ToDict.items %}
+                                                {% if score.0 is not None %}
+                                                <td>{{ score.0 }}</td>
+                                            {% else %}
+                                                <td>N/A</td>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            <td>Weighted</td>
+                                            {% for score_name, score in design.RawScores.ToDict.items %}
+                                                <td>{{ score|weighted_score }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <br/>
@@ -189,6 +448,10 @@
         --bs-table-color-type: var(--bs-table-striped-color);
         --bs-table-bg-type: var(--bs-table-striped-bg);
     }
+
+    .table-divider td {
+        padding: 0 !important;
+    }
 </style>
 
 <style>
@@ -251,6 +514,73 @@
 
     .signal-complex strong {
         margin-bottom: 5px;
+    }
+</style>
+
+<!-- Additional Styles -->
+<style>
+    .best-design-section {
+        background-color: #f8f9fa;
+        border: 2px solid #6c757d;
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+
+    .section h3 {
+        margin-top: 1.5rem;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 0.5rem;
+    }
+
+    .score-table, .best-worst-categories {
+        padding: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #ffffff;
+    }
+
+    /* Base style for the tab navigation */
+    .nav-tabs {
+        border-bottom: 2px solid var(--uk-secondary-dark-blue);
+        background-color: #f9f9f9;
+        margin-bottom: 1rem;
+    }
+
+    /* Inactive tabs */
+    .nav-tabs .nav-item .nav-link {
+        background-color: var(--uk-secondary-lighter-blue);
+        color: var(--uk-secondary-dark-blue);
+        border: 1px solid var(--uk-secondary-dark-blue);
+        border-radius: 8px 8px 0 0;
+        margin-right: 0.25rem;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Active tab */
+    .nav-tabs .nav-item .nav-link.active {
+        color: var(--uk-secondary-lighter-blue) !important;
+        background-color: var(--uk-secondary-dark-blue);
+        border: 1px solid var(--uk-secondary-dark-blue);
+        border-bottom: none;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Hover effect on inactive tabs */
+    .nav-tabs .nav-item .nav-link:hover {
+        background-color: var(--uk-secondary-dark-blue);
+        color: var(--uk-secondary-lighter-blue) !important;
+    }
+
+    /* Content container to separate tabs and content visually */
+    .tab-content {
+        background-color: #ffffff;
+        border: 1px solid var(--uk-secondary-dark-blue);
+        border-radius: 0 8px 8px 8px;
+        padding: 1.5rem;
+        margin-top: -1px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
     }
 </style>
 <script>

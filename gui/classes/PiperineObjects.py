@@ -1,3 +1,5 @@
+import numpy as np
+
 class Sequence:
     def __init__(self, name, seq):
         self.Name = name
@@ -134,6 +136,32 @@ class ScoresArray:
                 total += score * (weight / 100)
         return total
 
+    def Min(self, weighted=False):
+        min_score = None
+        min_test_name = None
+        for test_name, (score, weight) in self.ToDict().items():
+            if score is None:
+                continue
+            # Apply weighting if specified
+            score_to_check = score * weight / 100 if weighted else score
+            if min_score is None or score_to_check < min_score:
+                min_score = score_to_check
+                min_test_name = test_name
+        return min_test_name, min_score
+
+    def Max(self, weighted=False):
+        max_score = None
+        max_test_name = None
+        for test_name, (score, weight) in self.ToDict().items():
+            if score is None:
+                continue
+            # Apply weighting if specified
+            score_to_check = score * weight / 100 if weighted else score
+            if max_score is None or score_to_check > max_score:
+                max_score = score_to_check
+                max_test_name = test_name
+        return max_test_name, max_score
+
 
 class PiperineOutput:
     def __init__(self):
@@ -148,13 +176,130 @@ class PiperineOutput:
         rank_dict = {val: rank for rank, val in enumerate(unique_values)}
         return [rank_dict[v] for v in array]
 
-    # Worst-rank
-    # (weighted)
-    # Sum-of-ranks
-    # (weighted)
-    # Fractional-excess
-    # (weighted)
-    # Percent-badness
-    # (weighted)
     def MetaRanksArray(self):
-        rank_arrays = [design.RankArray.ToDict() for design in self.Designs]
+        meta_scores = {
+            "Design": [],
+            "Worst-rank": [],
+            "Worst-weighted-rank": [],
+            "Sum-of-ranks": [],
+            "Weighted Sum-of-ranks": [],
+            "Fractional-excess": [],
+            "Weighted Fractional-excess": [],
+            "Percent-badness": [],
+            "Weighted Percent-badness": []
+        }
+
+        for design in self.Designs:
+            # Calculate scores for each category
+            worst_rank = design.RankArray.Max()[1]
+            worst_weighted_rank = design.RankArray.Max(weighted=True)[1]
+            sum_of_ranks = design.RankArray.Sum()
+            weighted_sum_of_ranks = design.RankArray.WeightedSum()
+            fractional_excess = design.FractionalExcessArray.Sum()
+            weighted_fractional_excess = design.FractionalExcessArray.WeightedSum()
+            percent_badness = design.PercentBadnessArray.Sum()
+            weighted_percent_badness = design.PercentBadnessArray.WeightedSum()
+
+            # Collect scores for ranking
+            meta_scores["Design"].append(design.Name)
+            meta_scores["Worst-rank"].append(worst_rank)
+            meta_scores["Worst-weighted-rank"].append(worst_weighted_rank)
+            meta_scores["Sum-of-ranks"].append(sum_of_ranks)
+            meta_scores["Weighted Sum-of-ranks"].append(weighted_sum_of_ranks)
+            meta_scores["Fractional-excess"].append(fractional_excess)
+            meta_scores["Weighted Fractional-excess"].append(weighted_fractional_excess)
+            meta_scores["Percent-badness"].append(percent_badness)
+            meta_scores["Weighted Percent-badness"].append(weighted_percent_badness)
+
+        # Rank each design based on meta scores and add Meta Sum to ranked_meta_scores
+        ranked_meta_scores = {"Design": meta_scores["Design"]}
+        for category, scores in meta_scores.items():
+            if category != "Design":
+                ranked_meta_scores[category] = self.rank_values(scores)
+
+        # Calculate Meta Sum for each design
+        meta_ranks_sum = [
+            sum(ranked_meta_scores[category][i] for category in ranked_meta_scores if category != "Design")
+            for i in range(len(self.Designs))
+        ]
+        ranked_meta_scores["Meta Sum"] = meta_ranks_sum
+
+        # Determine the best Meta Sum and best designs based on Meta Sum
+        best_meta_sum = min(meta_ranks_sum)
+        best_designs = [self.Designs[i].Name for i, sum_rank in enumerate(meta_ranks_sum) if sum_rank == best_meta_sum]
+
+        # Debug output
+        print("Meta Scores:")
+        print(meta_scores)
+        print("Ranked Meta Scores:")
+        print(ranked_meta_scores)
+        print("Best Meta Sum:")
+        print(best_meta_sum)
+        print("Best Designs:")
+        print(best_designs)
+
+        return meta_scores, ranked_meta_scores, best_meta_sum, best_designs
+
+    def WorstRank(self):
+        scores = [design.RankArray.Max()[1] for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
+
+    def WorstWeightedRank(self):
+        scores = [design.RankArray.Max(weighted=True)[1] for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
+
+    def SumOfRanks(self):
+        scores = [design.RankArray.Sum() for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
+
+    def WeightedSumOfRank(self):
+        scores = [design.RankArray.WeightedSum() for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
+
+    def FractionalExcess(self):
+        scores = [design.FractionalExcessArray.Sum() for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
+
+    def WeightedFractionalExcess(self):
+        scores = [design.FractionalExcessArray.WeightedSum() for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
+
+    def PercentBadness(self):
+        scores = [design.PercentBadnessArray.Sum() for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
+
+    def WeightedPercentBadness(self):
+        scores = [design.PercentBadnessArray.WeightedSum() for design in self.Designs]
+        best_score = min(scores)
+        worst_score = max(scores)
+        best_design = [design.Name for design, score in zip(self.Designs, scores) if score == best_score]
+        worst_design = [design.Name for design, score in zip(self.Designs, scores) if score == worst_score]
+        return (best_score, best_design), (worst_score, worst_design)
