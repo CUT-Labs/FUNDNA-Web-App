@@ -1,0 +1,42 @@
+
+Raw scores array:
+                               TSI avg  TSI max   TO avg   TO max    WS-BM   Max-BM  SSU min  SSU avg SSTU min SSTU avg  BN% max  BN% avg     WSAS     WSIS   WSAS-M   WSIS-M Verboten Spurious dG Error dG Range
+design   0:                 [     0.78     0.34     0.45     0.68     0.85     0.70     0.04     0.62     0.19     0.94     0.25     0.80     0.66     0.76     0.94     0.46     0.76     0.60     0.23     0.18]
+design   1:                 [     0.46     0.07     0.87     0.44     0.50     0.68     0.38     0.60     0.30     0.87     0.95     0.71     0.69     0.01     0.18     0.28     0.01     0.87     0.75     0.60]
+design   2:                 [     0.47     0.97     0.18     0.04     0.28     0.35     0.19     0.13     0.21     0.60     0.94     0.38     0.92     0.79     0.68     0.32     0.47     0.75     0.01     0.85]
+
+Rank array:
+                               TSI avg  TSI max   TO avg   TO max    WS-BM   Max-BM  SSU min  SSU avg SSTU min SSTU avg  BN% max  BN% avg     WSAS     WSIS   WSAS-M   WSIS-M Verboten Spurious dG Error dG Range  :: worst 
+design   0:        24 = sum [        2        1        1        2        2        2        2        0        2        0        0        2        0        1        2        2        2        0        1        0] ::     2
+design   1:        16 = sum [        0        0        2        1        1        1        0        1        0        1        2        1        1        0        0        0        0        2        2        1] ::     2
+design   2:        20 = sum [        1        2        0        0        0        0        1        2        1        2        1        0        2        2        1        1        1        1        0        2] ::     2
+
+Fractional excess array:
+                               TSI avg  TSI max   TO avg   TO max    WS-BM   Max-BM  SSU min  SSU avg SSTU min SSTU avg  BN% max  BN% avg     WSAS     WSIS   WSAS-M   WSIS-M Verboten Spurious dG Error dG Range
+design   0:    162.27 = sum [     0.72     3.65     1.46    17.12     2.01     1.04     0.90     0.00     0.35     0.00     0.00     1.09     0.00    52.85     4.32     0.62    60.98     0.00    15.16     0.00]
+design   1:     73.30 = sum [     0.00     0.00     3.79    10.81     0.78     0.97     0.00     0.03     0.00     0.07     2.77     0.85     0.04     0.00     0.00     0.00     0.00     0.44    50.38     2.36]
+design   2:    117.02 = sum [     0.02    12.34     0.00     0.00     0.00     0.00     0.50     0.78     0.30     0.37     2.73     0.00     0.38    55.20     2.86     0.12    37.44     0.25     0.00     3.73]
+
+Percent badness (best to worst) array:
+                               TSI avg  TSI max   TO avg   TO max    WS-BM   Max-BM  SSU min  SSU avg SSTU min SSTU avg  BN% max  BN% avg     WSAS     WSIS   WSAS-M   WSIS-M Verboten Spurious dG Error dG Range
+design   0:   1193.94 = sum [   100.00    29.55    38.56   100.00   100.00   100.00   100.00     0.00   100.00     0.00     0.00   100.00     0.00    95.73   100.00   100.00   100.00     0.00    30.10     0.00]
+design   1:    772.23 = sum [     0.00     0.00   100.00    63.16    38.94    94.10     0.00     3.27     0.00    20.09   100.00    78.03    11.47     0.00     0.00     0.00     0.00   100.00   100.00    63.18]
+design   2:   1045.67 = sum [     3.45   100.00     0.00     0.00     0.00     0.00    55.36   100.00    84.50   100.00    98.68     0.00   100.00   100.00    66.08    19.87    61.40    56.33     0.00   100.00]
+
+Best worst-rank:                         2.00 by [0, 1, 2]  and the worst:     2.00 by [0, 1, 2]
+Best worst-weighted-rank:                0.30 by [1]        and the worst:     1.00 by [0]
+Best sum-of-ranks:                      16.00 by [1]        and the worst:    24.00 by [0]
+Best sum-of-weighted-ranks:              1.72 by [1]        and the worst:     3.14 by [0]
+Best fractional excess sum:             73.30 by [1]        and the worst:   162.27 by [0]
+Best weighted fractional excess sum:     7.08 by [2]        and the worst:    11.70 by [0]
+Best percent badness sum:              772.23 by [1]        and the worst:  1193.94 by [0]
+Best weighted percent badness sum:      82.12 by [1]        and the worst:   158.53 by [2]
+
+Metascores array:
+                                 Worst-rank (weighted)  Sum-of-ranks  (weighted) Fractional-excess (weighted) Percent-badness (weighted)
+design   0:     13 = sum [            0            2            2            2            2            2            2            1       ]
+design   1:      1 = sum [            0            0            0            0            0            1            0            0       ]
+design   2:      7 = sum [            0            1            1            1            1            0            1            2       ]
+
+Best sum-of-metaranks:      1 by [1]
+

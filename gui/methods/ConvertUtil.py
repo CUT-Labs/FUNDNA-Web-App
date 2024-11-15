@@ -518,7 +518,7 @@ def CheckPiperineExecutionStatus(output_file, error_string, success_string, poll
     return CheckPiperineExecutionStatus(output_file, error_string, success_string, polling_interval, max_attempts - 1)
 
 
-def process_piperine_output(temp_dir):
+def process_piperine_output(temp_dir, logging=True):
     piperine_output = PiperineOutput()
 
     # Iterate through the extracted files to populate the PiperineOutput object
@@ -534,10 +534,12 @@ def process_piperine_output(temp_dir):
                 design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                 if not design:
                     design = Design(design_name)
-                    print(f"Making design {design_name} STRANDS")
+                    if logging:
+                        print(f"Making design {design_name} STRANDS")
                     piperine_output.Designs.append(design)
                 else:
-                    print(f"Using design {design.Name} STRANDS")
+                    if logging:
+                        print(f"Using design {design.Name} STRANDS")
 
                 current_section = None
                 current_complex = None
@@ -554,7 +556,8 @@ def process_piperine_output(temp_dir):
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
                         design.SignalStrands.append(Strand(strand_name, strand_seq, True))
-                        print(f"\tSignal Strand: {strand_name} - {strand_seq}")
+                        if logging:
+                            print(f"\tSignal Strand: {strand_name} - {strand_seq}")
                     elif line.startswith("Complex") and \
                             (current_section == "fcomplexes" or current_section == "complexes"):
                         isFuel = False
@@ -564,13 +567,15 @@ def process_piperine_output(temp_dir):
                         complex_name = parts[1].strip()
                         current_complex = Complex(complex_name, [], isFuel)
                         design.Complexes.append(current_complex)
-                        print(f"\tComplex: {complex_name}{' - Fuel' if isFuel else ''}")
+                        if logging:
+                            print(f"\tComplex: {complex_name}{' - Fuel' if isFuel else ''}")
                     elif line.startswith("Strand") and (current_section == "complexes" or current_section == "fcomplexes"):
                         parts = line.split(" : ")
                         strand_name = parts[0].replace("Strand ", "").strip()
                         strand_seq = parts[1].strip()
                         current_complex.Strands.append(Strand(strand_name, strand_seq, False))
-                        print(f"\t\tStrand: {strand_name} - {strand_seq}")
+                        if logging:
+                            print(f"\t\tStrand: {strand_name} - {strand_seq}")
 
             elif file.endswith(".seqs"):
                 design_id = int((file.split(".seqs")[0]).split("y")[1])
@@ -581,10 +586,12 @@ def process_piperine_output(temp_dir):
                 design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                 if not design:
                     design = Design(design_name)
-                    print(f"Making design {design_name} SEQ")
+                    if logging:
+                        print(f"Making design {design_name} SEQ")
                     piperine_output.Designs.append(design)
                 else:
-                    print(f"Using design {design.Name} SEQ")
+                    if logging:
+                        print(f"Using design {design.Name} SEQ")
 
                 current_section = None
                 for line in lines:
@@ -602,39 +609,53 @@ def process_piperine_output(temp_dir):
                         seq_name = parts[0].replace("sequence ", "").strip()
                         sequence = parts[1].strip()
                         design.Sequences.append(Sequence(seq_name, sequence))
-                        print(f"\tSequence: {seq_name} - {sequence}")
+                        if logging:
+                            print(f"\tSequence: {seq_name} - {sequence}")
                     elif line.startswith("strand") and current_section == "strands":
                         parts = line.split(" = ")
                         strand_name = parts[0].replace("strand ", "").strip()
                         strand = parts[1].strip()
                         design.Strands.append(Strand(strand_name, strand, False))
-                        print(f"\tStrand: {strand_name} - {strand}")
+                        if logging:
+                            print(f"\tStrand: {strand_name} - {strand}")
                     elif line.startswith("structure") and current_section == "structures":
                         parts = line.split(" = ")
                         structure_name = parts[0].replace("structure ", "").strip()
                         structure = parts[1].strip()
                         design.Structures.append(Structure(structure_name, structure))
-                        print(f"\tStructure: {structure_name} - {structure}")
+                        if logging:
+                            print(f"\tStructure: {structure_name} - {structure}")
 
             elif file.endswith("_score_report.txt"):
                 with open(file_path, "r") as f:
                     lines = f.readlines()
 
-                print(f"Analyzing Score Report")
+                if logging:
+                    print(f"Analyzing Score Report")
                 current_array = None
                 import re
-                score_lines_pattern = re.compile(r"design\s+(\d+):\s*\[(.*?)\]")
+                score_lines_pattern = re.compile(r"design\s+(\d+):.*\[(.*?)\]")
 
                 for line in lines:
                     line = line.strip()
+                    if logging and line:
+                        print("Line Found: " + line)
                     if line.startswith("Raw scores array:"):
                         current_array = "raw_scores"
+                        if logging:
+                            print("\tLooking at Raw Scores")
                     elif line.startswith("Rank array:"):
                         current_array = "rank_array"
+                        if logging:
+                            print("\tLooking at Rank Array")
                     elif line.startswith("Fractional excess array:"):
                         current_array = "fractional_excess"
+                        if logging:
+                            print("\tLooking at Fractional Excess")
                     elif line.startswith("Percent badness (best to worst) array:"):
                         current_array = "percent_badness"
+                        if logging:
+                            print("\tLooking at Percent Badness")
                     elif line.startswith("Best"):
                         current_array = None
                     elif current_array and score_lines_pattern.search(line):
@@ -648,20 +669,32 @@ def process_piperine_output(temp_dir):
                         design = next((d for d in piperine_output.Designs if d.Name == design_name), None)
                         if not design:
                             design = Design(design_name)
-                            print(f"Making design {design_name}")
+                            if logging:
+                                print(f"\t\tMaking design {design_name}")
                             piperine_output.Designs.append(design)
                         else:
-                            print(f"Using design {design.Name}")
+                            if logging:
+                                print(f"\t\tUsing design {design.Name}")
 
                         # Assign the values to the appropriate ScoresArray
                         if current_array == "raw_scores":
+                            if logging:
+                                print(f"\t\tRaw Scores for {design.Name}: {values_list}")
                             design.RawScores.from_list(values_list)
                         elif current_array == "rank_array":
+                            if logging:
+                                print(f"\t\tRank Array for {design.Name}: {values_list}")
                             design.RankArray.from_list(values_list)
                         elif current_array == "fractional_excess":
+                            if logging:
+                                print(f"\t\tFractional Excess for {design.Name}: {values_list}")
                             design.FractionalExcessArray.from_list(values_list)
                         elif current_array == "percent_badness":
+                            if logging:
+                                print(f"\t\tPercent Badness for {design.Name}: {values_list}")
                             design.PercentBadnessArray.from_list(values_list)
+
+    piperine_output.MetaRanksArray()
 
     return piperine_output
 

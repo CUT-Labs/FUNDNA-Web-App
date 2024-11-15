@@ -120,5 +120,69 @@
     }
 </style>
 
+<style>
+    .chevron-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .chevron {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 65px;
+        height: 30px;
+        margin-right: -10px;
+        background-color: var(--uk-secondary-lighter-blue);
+        clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%);
+        text-align: center;
+        font-size: 0.8rem;
+    }
+
+    .chevron .domain-label {
+        color: var(--primary);
+        font-weight: bold;
+        white-space: nowrap;
+        padding-left: 5px;
+    }
+
+    .chevron::before {
+        content: attr(title);
+        position: absolute;
+        bottom: -18px;
+        font-size: 0.7rem;
+        font-weight: normal;
+        color: var(--primary);
+    }
+
+    /* Bottom border for all `.sequence` elements except the last one */
+    .sequence:not(:last-child) {
+        border-bottom: 1px solid var(--uk-secondary-dark-blue);
+    }
+
+    .sequence {
+        display: flex;
+        flex-direction: column;
+        padding: 5px 0;
+    }
+
+    .seq {
+        padding: 0.5em 0;
+        width: 100%;
+    }
+
+    /* Bottom border for all `.sequence` elements except the last one */
+    .seq:not(:last-child) {
+        border-bottom: 1px solid var(--uk-secondary-lighter-blue);
+    }
+
+    .signal-complex strong {
+        margin-bottom: 5px;
+    }
+</style>
+
+
 <!-- Include Bootstrap JS (necessary for accordion functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
