@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Sequence:
     def __init__(self, name, seq):
         self.Name = name
@@ -166,6 +167,7 @@ class ScoresArray:
 class PiperineOutput:
     def __init__(self):
         self.Designs = []
+        self.BestDesigns = None
 
     def rank_values(self, values, reversed=False):
         # Rank the values, lower is better by default unless reversed is True
@@ -176,7 +178,7 @@ class PiperineOutput:
         rank_dict = {val: rank for rank, val in enumerate(unique_values)}
         return [rank_dict[v] for v in array]
 
-    def MetaRanksArray(self):
+    def MetaRanksArray(self, logging=False):
         meta_scores = {
             "Design": [],
             "Worst-rank": [],
@@ -211,10 +213,15 @@ class PiperineOutput:
             meta_scores["Percent-badness"].append(percent_badness)
             meta_scores["Weighted Percent-badness"].append(weighted_percent_badness)
 
+            if logging:
+                print(meta_scores)
+
         # Rank each design based on meta scores and add Meta Sum to ranked_meta_scores
         ranked_meta_scores = {"Design": meta_scores["Design"]}
         for category, scores in meta_scores.items():
             if category != "Design":
+                if logging:
+                    print(scores)
                 ranked_meta_scores[category] = self.rank_values(scores)
 
         # Calculate Meta Sum for each design
@@ -227,16 +234,18 @@ class PiperineOutput:
         # Determine the best Meta Sum and best designs based on Meta Sum
         best_meta_sum = min(meta_ranks_sum)
         best_designs = [self.Designs[i].Name for i, sum_rank in enumerate(meta_ranks_sum) if sum_rank == best_meta_sum]
+        self.BestDesigns = [self.Designs[i] for i, sum_rank in enumerate(meta_ranks_sum) if sum_rank == best_meta_sum]
 
-        # Debug output
-        print("Meta Scores:")
-        print(meta_scores)
-        print("Ranked Meta Scores:")
-        print(ranked_meta_scores)
-        print("Best Meta Sum:")
-        print(best_meta_sum)
-        print("Best Designs:")
-        print(best_designs)
+        if logging:
+            # Debug output
+            print("Meta Scores:")
+            print(meta_scores)
+            print("Ranked Meta Scores:")
+            print(ranked_meta_scores)
+            print("Best Meta Sum:")
+            print(best_meta_sum)
+            print("Best Designs:")
+            print(best_designs)
 
         return meta_scores, ranked_meta_scores, best_meta_sum, best_designs
 

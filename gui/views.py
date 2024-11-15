@@ -200,7 +200,7 @@ def convertResult(request):
         # SECTION 5: DNA
         # Handle CRN/DNA conversion using Piperine
         transposed_scores = []
-        debug = True
+        debug = False
         if "dna" in selected_sections:
             if debug:
                 # Initialize PiperineOutput
