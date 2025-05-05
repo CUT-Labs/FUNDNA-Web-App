@@ -77,10 +77,10 @@ def ShowGraphBuffer(buf, show=False, temp=False):
 def main():
     # Define the target function for comparison
     def original_function(x):
-        return 0.5 * x + 0.25
+        return (x**2 - 2*x + 1)/(x**2 - x + 1)
 
     # Define states with example probabilities for each state output
-    states = [0.25, 0.75]
+    states = [1, 0, 0]
 
     # Initialize the translation scheme
     scheme_name = "JPHuseProposed"

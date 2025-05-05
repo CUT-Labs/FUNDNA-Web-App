@@ -19,30 +19,32 @@ import matplotlib
 # matplotlib.use('TkAgg')
 
 
-def ODESolver(method, functionStr, s0_out, s1_out):
+def ODESolver(method, functionStr, s0_out, s1_out, s2_out):
     # Define the ODE system
     def crn_odes(y, t, k):
-        S0, S1, Y0, Y1 = y
+        S0, S1, S2, Y0, Y1 = y
         X0 = 1 - t  # Fractional encoding: [X0] + [X1] = 1
         X1 = t
 
         # Unpack rate constants
-        k1, k2, k3, k4, k5, k6, k7, k8 = k
+        k1, k2, k3, k4, k5, k6 = k
 
         # ODEs based on the CRN
-        dS0_dt = - (k3 * S0 * X1 + k4 * S0 * X1) + (k5 * S1 * X0 + k6 * S1 * X0)
-        dS1_dt = - (k5 * S1 * X0 + k6 * S1 * X0) + (k3 * S0 * X1 + k4 * S0 * X1)
-        dY0_dt = k1 * S0 * X0 + k3 * S0 * X1 + k5 * S1 * X0 + k7 * S1 * X1
-        dY1_dt = k2 * S0 * X0 + k4 * S0 * X1 + k6 * S1 * X0 + k8 * S1 * X1
+        dS0_dt = k3 * S1 * X0 - k2 * S0 * X1
+        dS1_dt = (k2 * S0 * X1 + k5 * S2 * X0) - (k3 * S1 * X0 + k4 * S1 * X1)
+        dS2_dt = k4 * S1 * X1 - k5 * S2 * X0
+        dY0_dt = k2 * S0 * X1 + k4 * S1 * X1 + k5 * S2 * X0 + k6 * S2 * X1
+        dY1_dt = k1 * S0 * X0 + k3 * S1 * X0
 
-        return [dS0_dt, dS1_dt, dY0_dt, dY1_dt]
+        return [dS0_dt, dS1_dt, dS2_dt, dY0_dt, dY1_dt]
 
     # Initial conditions
     S0_0 = 0.01
     S1_0 = 0.0
+    S2_0 = 0.0
     Y0_0 = 0.0
     Y1_0 = 0.0
-    y0 = [S0_0, S1_0, Y0_0, Y1_0]
+    y0 = [S0_0, S1_0, S2_0, Y0_0, Y1_0]
 
     # Time points to solve over
     t = np.linspace(0, 1, 1000)  # Since X0 + X1 = 1, vary t to represent different [X0], [X1]
@@ -51,7 +53,7 @@ def ODESolver(method, functionStr, s0_out, s1_out):
     def objective_function(k):
         # Solve the ODEs with the current k values
         solution = odeint(crn_odes, y0, t, args=(k,))
-        S0, S1, Y0, Y1 = solution.T
+        S0, S1, S2, Y0, Y1 = solution.T
 
         # Calculate the actual Y_ratio
         with np.errstate(divide='ignore', invalid='ignore'):
@@ -68,15 +70,13 @@ def ODESolver(method, functionStr, s0_out, s1_out):
         return mse
 
     # Initial guess for the rate constants
-    initial_k = [1 - s0_out,  # s0 -> s0 *
-                 s0_out,  # s0 -> s0 (true output)
-                 1 - s1_out,  # s0 -> s1 *
-                 s1_out,  # s0 -> s1 (true output)
+    initial_k = [1,
+                 0,
+                 1,
+                 0,
 
-                 1 - s0_out,  # s1 -> s0 *
-                 s0_out,  # s1 -> s0 (true output)
-                 1 - s1_out,  # s1 -> s1 *
-                 s1_out]  # s1 -> s1 (true output)
+                 0,
+                 0]
 
     # Optimize the rate constants to minimize the MSE
     result = minimize(objective_function, initial_k, method=method, bounds=Bounds(0, 10 ** 10))
@@ -90,7 +90,7 @@ def ODESolver(method, functionStr, s0_out, s1_out):
 
     # Solve the ODEs with the optimized rate constants
     solution = odeint(crn_odes, y0, t, args=(optimized_k,))
-    S0, S1, Y0, Y1 = solution.T
+    S0, S1, S2, Y0, Y1 = solution.T
 
     # Calculate the Y_ratio and X_ratio for plotting
     with np.errstate(divide='ignore', invalid='ignore'):
@@ -136,7 +136,7 @@ def ODESolver(method, functionStr, s0_out, s1_out):
 
 # Original function f(x) = 0.5x
 def original_function(x):
-    return 0.5*x + 0.25
+    return (x**2 - 2*x + 1)/(x**2 - x + 1)
 
 
-ODESolver('trust-constr', '0.5*x + 0.25', s0_out=0.25, s1_out=0.75)
+ODESolver('Nelder-Mead', '(x**2 - 2*x + 1)/(x**2 - x + 1)', s0_out=1, s1_out=0, s2_out=0)
